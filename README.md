@@ -1,11 +1,16 @@
 # Qong'iroqchi.uz Dashboard
 
-Qong'iroqchi.uz avtomatik qo'ng'iroqlar platformasi uchun responsive dashboard UI.
+React va TypeScript asosida qurilgan Qong'iroqchi.uz avtomatik qo'ng'iroqlar platformasi uchun responsive dashboard UI.
 
 ## Ishga tushirish
 
 ```bash
-python3 -m http.server 8080
+npm install
+npm run dev
 ```
 
-Brauzerda `http://localhost:8080` manzilini oching.
+Production build:
+
+```bash
+npm run build
+```

@@ -6,6 +6,9 @@ const permissions = [
   "users.read", "users.create", "users.update", "users.delete", "companies.read", "companies.create", "companies.update", "companies.delete",
   "roles.read", "roles.create", "roles.update", "roles.delete", "permissions.read", "permissions.create", "permissions.update", "permissions.delete",
   "leads.read", "leads.create", "leads.update", "leads.delete", "auditLogs.read", "errorLogs.read", "errorLogs.update",
+  "contacts.read", "contacts.create", "contacts.update", "contacts.delete", "contacts.import",
+  "contactGroups.read", "contactGroups.create", "contactGroups.update", "contactGroups.delete",
+  "campaigns.read", "campaigns.create", "campaigns.update", "campaigns.delete", "campaigns.upload",
 ];
 
 async function main() {

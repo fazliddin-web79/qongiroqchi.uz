@@ -1,4 +1,6 @@
 import { notFound } from "next/navigation";
+import { CampaignsPage } from "@/components/pages/campaigns-page";
+import { ContactsPage } from "@/components/pages/contacts-page";
 import { DashboardPlaceholder, type DashboardPageKey } from "@/components/pages/dashboard-placeholder";
 
 const pageMap: Record<string, DashboardPageKey> = {
@@ -8,6 +10,8 @@ const pageMap: Record<string, DashboardPageKey> = {
 
 export default async function Page({ params }: { params: Promise<{ section: string }> }) {
   const { section } = await params;
+  if (section === "contacts") return <ContactsPage />;
+  if (section === "campaigns") return <CampaignsPage />;
   const page = pageMap[section];
   if (!page) notFound();
   return <DashboardPlaceholder page={page} />;

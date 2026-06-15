@@ -43,5 +43,24 @@
   "dashboard": {
     "stats": { "companies": "Companies", "campaigns": "Active campaigns", "calls": "Total calls", "leads": "New leads" }, "recent": { "title": "Recent campaigns", "description": "A quick view of current campaign status." }, "table": { "campaign": "Campaign", "company": "Company", "calls": "Calls", "status": "Status" },
     "rows": { "summer": { "campaign": "Summer offer", "company": "Acme Group", "calls": "3,840" }, "welcome": { "campaign": "New customers", "company": "Nova Tech", "calls": "1,920" }, "payment": { "campaign": "Payment reminder", "company": "Atlas Market", "calls": "2,730" } }
+  },
+  "modules": {
+    "common": { "loading": "Loading data...", "error": "The request could not be completed.", "retry": "Try again", "actions": "Actions", "edit": "Edit", "delete": "Delete", "previous": "Previous", "next": "Next", "cancel": "Cancel", "saving": "Saving...", "save": "Save" },
+    "contacts": {
+      "groups": "Groups", "import": "Import", "search": "Search by name or phone...", "allGroups": "All groups", "allStatuses": "All statuses", "noGroup": "No group",
+      "created": "Contact created.", "updated": "Contact updated.", "deleted": "Contact deleted.", "deleteConfirm": "Are you sure you want to delete this contact?",
+      "groupCreated": "Contact group created.", "groupDeleteConfirm": "Are you sure you want to delete this group?", "imported": "Imported", "skipped": "Skipped",
+      "createTitle": "Add contact", "editTitle": "Edit contact", "groupsTitle": "Contact groups", "importTitle": "Import contacts",
+      "importHint": "CSV or XLSX must contain fullName and phone columns. Maximum 2,000 rows.", "contactsCount": "contacts",
+      "fields": { "fullName": "Full name", "phone": "Phone", "group": "Group", "status": "Status", "extraFields": "Extra fields (JSON)", "groupName": "Group name", "description": "Description" },
+      "status": { "ACTIVE": "Active", "BLOCKED": "Blocked", "UNSUBSCRIBED": "Unsubscribed" }
+    },
+    "campaigns": {
+      "search": "Search campaigns by name...", "created": "Campaign created.", "updated": "Campaign updated.", "deleted": "Campaign deleted.",
+      "deleteConfirm": "Are you sure you want to delete this campaign?", "createTitle": "Create campaign", "editTitle": "Edit campaign", "notScheduled": "Not scheduled",
+      "selectGroup": "Select a contact group", "chooseAudio": "Choose an audio file (MP3, WAV, OGG, M4A)",
+      "fields": { "name": "Name", "description": "Description", "group": "Contact group", "status": "Status", "startTime": "Start time", "createdBy": "Created by", "audio": "Audio file", "retryEnabled": "Enable retries", "retryCount": "Retry count", "ivrSettings": "IVR settings (JSON)" },
+      "status": { "DRAFT": "Draft", "SCHEDULED": "Scheduled", "RUNNING": "Running", "PAUSED": "Paused", "COMPLETED": "Completed", "FAILED": "Failed" }
+    }
   }
 }

@@ -77,5 +77,27 @@
       "welcome": { "campaign": "Yangi mijozlar", "company": "Nova Tech", "calls": "1,920" },
       "payment": { "campaign": "To'lov eslatmasi", "company": "Atlas Market", "calls": "2,730" }
     }
+  },
+  "modules": {
+    "common": {
+      "loading": "Ma'lumotlar yuklanmoqda...", "error": "So'rovni bajarib bo'lmadi.", "retry": "Qayta urinish", "actions": "Amallar",
+      "edit": "Tahrirlash", "delete": "O'chirish", "previous": "Oldingi", "next": "Keyingi", "cancel": "Bekor qilish", "saving": "Saqlanmoqda...", "save": "Saqlash"
+    },
+    "contacts": {
+      "groups": "Guruhlar", "import": "Import", "search": "Ism yoki telefon bo'yicha qidirish...", "allGroups": "Barcha guruhlar", "allStatuses": "Barcha statuslar", "noGroup": "Guruhsiz",
+      "created": "Kontakt yaratildi.", "updated": "Kontakt yangilandi.", "deleted": "Kontakt o'chirildi.", "deleteConfirm": "Kontaktni o'chirishni tasdiqlaysizmi?",
+      "groupCreated": "Kontakt guruhi yaratildi.", "groupDeleteConfirm": "Guruhni o'chirishni tasdiqlaysizmi?", "imported": "Import qilindi", "skipped": "O'tkazib yuborildi",
+      "createTitle": "Kontakt qo'shish", "editTitle": "Kontaktni tahrirlash", "groupsTitle": "Kontakt guruhlari", "importTitle": "Kontaktlarni import qilish",
+      "importHint": "CSV yoki XLSX faylda fullName va phone ustunlari bo'lishi kerak. Maksimum 2,000 qator.", "contactsCount": "kontakt",
+      "fields": { "fullName": "To'liq ism", "phone": "Telefon", "group": "Guruh", "status": "Status", "extraFields": "Qo'shimcha maydonlar (JSON)", "groupName": "Guruh nomi", "description": "Izoh" },
+      "status": { "ACTIVE": "Faol", "BLOCKED": "Bloklangan", "UNSUBSCRIBED": "Obunadan chiqqan" }
+    },
+    "campaigns": {
+      "search": "Kampaniya nomi bo'yicha qidirish...", "created": "Kampaniya yaratildi.", "updated": "Kampaniya yangilandi.", "deleted": "Kampaniya o'chirildi.",
+      "deleteConfirm": "Kampaniyani o'chirishni tasdiqlaysizmi?", "createTitle": "Kampaniya yaratish", "editTitle": "Kampaniyani tahrirlash", "notScheduled": "Rejalashtirilmagan",
+      "selectGroup": "Kontakt guruhini tanlang", "chooseAudio": "Audio fayl tanlang (MP3, WAV, OGG, M4A)",
+      "fields": { "name": "Nomi", "description": "Tavsif", "group": "Kontakt guruhi", "status": "Status", "startTime": "Boshlanish vaqti", "createdBy": "Yaratuvchi", "audio": "Audio fayl", "retryEnabled": "Qayta urinish yoqilsin", "retryCount": "Qayta urinishlar soni", "ivrSettings": "IVR sozlamalari (JSON)" },
+      "status": { "DRAFT": "Qoralama", "SCHEDULED": "Rejalashtirilgan", "RUNNING": "Ishlamoqda", "PAUSED": "To'xtatilgan", "COMPLETED": "Yakunlangan", "FAILED": "Xatolik" }
+    }
   }
 }

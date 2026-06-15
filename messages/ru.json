@@ -43,5 +43,24 @@
   "dashboard": {
     "stats": { "companies": "Компании", "campaigns": "Активные кампании", "calls": "Всего звонков", "leads": "Новые лиды" }, "recent": { "title": "Последние кампании", "description": "Краткий статус текущих кампаний." }, "table": { "campaign": "Кампания", "company": "Компания", "calls": "Звонки", "status": "Статус" },
     "rows": { "summer": { "campaign": "Летнее предложение", "company": "Acme Group", "calls": "3,840" }, "welcome": { "campaign": "Новые клиенты", "company": "Nova Tech", "calls": "1,920" }, "payment": { "campaign": "Напоминание об оплате", "company": "Atlas Market", "calls": "2,730" } }
+  },
+  "modules": {
+    "common": { "loading": "Загрузка данных...", "error": "Не удалось выполнить запрос.", "retry": "Повторить", "actions": "Действия", "edit": "Изменить", "delete": "Удалить", "previous": "Назад", "next": "Далее", "cancel": "Отмена", "saving": "Сохранение...", "save": "Сохранить" },
+    "contacts": {
+      "groups": "Группы", "import": "Импорт", "search": "Поиск по имени или телефону...", "allGroups": "Все группы", "allStatuses": "Все статусы", "noGroup": "Без группы",
+      "created": "Контакт создан.", "updated": "Контакт обновлён.", "deleted": "Контакт удалён.", "deleteConfirm": "Удалить этот контакт?",
+      "groupCreated": "Группа контактов создана.", "groupDeleteConfirm": "Удалить эту группу?", "imported": "Импортировано", "skipped": "Пропущено",
+      "createTitle": "Добавить контакт", "editTitle": "Изменить контакт", "groupsTitle": "Группы контактов", "importTitle": "Импорт контактов",
+      "importHint": "CSV или XLSX должен содержать столбцы fullName и phone. Максимум 2 000 строк.", "contactsCount": "контактов",
+      "fields": { "fullName": "Полное имя", "phone": "Телефон", "group": "Группа", "status": "Статус", "extraFields": "Дополнительные поля (JSON)", "groupName": "Название группы", "description": "Описание" },
+      "status": { "ACTIVE": "Активен", "BLOCKED": "Заблокирован", "UNSUBSCRIBED": "Отписан" }
+    },
+    "campaigns": {
+      "search": "Поиск кампаний по названию...", "created": "Кампания создана.", "updated": "Кампания обновлена.", "deleted": "Кампания удалена.",
+      "deleteConfirm": "Удалить эту кампанию?", "createTitle": "Создать кампанию", "editTitle": "Изменить кампанию", "notScheduled": "Не запланировано",
+      "selectGroup": "Выберите группу контактов", "chooseAudio": "Выберите аудиофайл (MP3, WAV, OGG, M4A)",
+      "fields": { "name": "Название", "description": "Описание", "group": "Группа контактов", "status": "Статус", "startTime": "Время запуска", "createdBy": "Автор", "audio": "Аудиофайл", "retryEnabled": "Включить повторы", "retryCount": "Количество повторов", "ivrSettings": "Настройки IVR (JSON)" },
+      "status": { "DRAFT": "Черновик", "SCHEDULED": "Запланирована", "RUNNING": "Запущена", "PAUSED": "Приостановлена", "COMPLETED": "Завершена", "FAILED": "Ошибка" }
+    }
   }
 }

@@ -19,6 +19,7 @@ model User {
   errorLogs     ErrorLog[]
   refreshTokens RefreshToken[]
   assignedLeads Lead[]         @relation("AssignedLeads")
+  campaigns     Campaign[]     @relation("CampaignCreator")
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   deletedAt     DateTime?
@@ -27,16 +28,19 @@ model User {
 }
 
 model Company {
-  id        String     @id @default(uuid()) @db.Uuid
+  id        String         @id @default(uuid()) @db.Uuid
   name      String
-  slug      String     @unique
+  slug      String         @unique
   users     User[]
   roles     Role[]
   auditLogs AuditLog[]
   errorLogs ErrorLog[]
   leads     Lead[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  contacts  Contact[]
+  groups    ContactGroup[]
+  campaigns Campaign[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
   deletedAt DateTime?
 }
 
@@ -153,8 +157,86 @@ model Lead {
   @@index([assignedToId])
 }
 
+model Contact {
+  id          String        @id @default(uuid()) @db.Uuid
+  companyId   String        @db.Uuid
+  fullName    String
+  phone       String
+  extraFields Json          @default("{}")
+  groupId     String?       @db.Uuid
+  status      ContactStatus @default(ACTIVE)
+  company     Company       @relation(fields: [companyId], references: [id])
+  group       ContactGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  @@index([companyId])
+  @@index([companyId, phone])
+  @@index([groupId])
+  @@index([status])
+}
+
+model ContactGroup {
+  id          String     @id @default(uuid()) @db.Uuid
+  companyId   String     @db.Uuid
+  name        String
+  description String?
+  company     Company    @relation(fields: [companyId], references: [id])
+  contacts    Contact[]
+  campaigns   Campaign[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  deletedAt   DateTime?
+
+  @@unique([companyId, name])
+  @@index([companyId])
+}
+
+model Campaign {
+  id             String         @id @default(uuid()) @db.Uuid
+  companyId      String         @db.Uuid
+  name           String
+  description    String?
+  audioUrl       String?
+  contactGroupId String         @db.Uuid
+  status         CampaignStatus @default(DRAFT)
+  startTime      DateTime?
+  retryEnabled   Boolean        @default(false)
+  retryCount     Int            @default(0)
+  ivrSettings    Json           @default("{}")
+  createdById    String         @db.Uuid
+  company        Company        @relation(fields: [companyId], references: [id])
+  contactGroup   ContactGroup   @relation(fields: [contactGroupId], references: [id])
+  createdBy      User           @relation("CampaignCreator", fields: [createdById], references: [id])
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  deletedAt      DateTime?
+
+  @@index([companyId])
+  @@index([contactGroupId])
+  @@index([createdById])
+  @@index([status])
+  @@index([startTime])
+}
+
 enum RoleName {
   SUPER_ADMIN
   ADMIN
   OPERATOR
+}
+
+enum ContactStatus {
+  ACTIVE
+  BLOCKED
+  UNSUBSCRIBED
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  RUNNING
+  PAUSED
+  COMPLETED
+  FAILED
 }

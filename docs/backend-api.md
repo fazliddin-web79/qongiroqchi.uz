@@ -46,8 +46,18 @@ object containing a stable `code`.
 | POST | `/api/leads` | SUPER_ADMIN, ADMIN |
 | GET, PATCH | `/api/leads/:id` | SUPER_ADMIN, ADMIN, assigned OPERATOR |
 | DELETE | `/api/leads/:id` | SUPER_ADMIN, ADMIN |
+| GET, POST | `/api/contact-groups` | SUPER_ADMIN, ADMIN |
+| GET, PATCH, DELETE | `/api/contact-groups/:id` | SUPER_ADMIN, ADMIN |
+| GET, POST | `/api/contacts` | SUPER_ADMIN, ADMIN |
+| GET, PATCH, DELETE | `/api/contacts/:id` | SUPER_ADMIN, ADMIN |
+| POST | `/api/contacts/import` | SUPER_ADMIN, ADMIN; CSV/XLSX up to 2,000 rows |
+| GET, POST | `/api/campaigns` | SUPER_ADMIN, ADMIN |
+| GET, PATCH, DELETE | `/api/campaigns/:id` | SUPER_ADMIN, ADMIN |
+| POST | `/api/campaigns/upload-audio` | SUPER_ADMIN, ADMIN; MP3/WAV/OGG/M4A up to 25 MB |
 
 List endpoints that return paginated data accept `?page=1&limit=20`.
+Contact and campaign lists also accept `search`, `status`, and group filters.
+SUPER_ADMIN can pass `companyId` to scope lists and create records.
 
 ## Role Scope
 
@@ -56,6 +66,10 @@ List endpoints that return paginated data accept `?page=1&limit=20`.
 - `OPERATOR` can only read assigned leads and can only update their status.
 - Important create, update, delete, and auth actions are written to `AuditLog`.
 - Route handler errors are normalized and written to `ErrorLog`.
+- Contact phone numbers are normalized to E.164 and checked for active duplicates
+  inside each company.
+- Campaign audio currently uses the local `public/uploads/audio` adapter. Replace
+  it with object storage before horizontally scaling the application.
 
 ## Authentication Flow
 
@@ -108,6 +122,14 @@ Create a separate company ADMIN account:
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{"name":"Admin","email":"admin@example.com","password":"ChangeMe123!","companyName":"Example Company","companySlug":"example-company"}'
+```
+
+Import contacts:
+
+```bash
+curl -b cookies.txt -X POST http://localhost:3000/api/contacts/import \
+  -F "file=@contacts.csv" \
+  -F "groupId=<contact-group-uuid>"
 ```
 
 Change the seeded password and both JWT secrets before deploying.

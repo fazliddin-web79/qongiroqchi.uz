@@ -9,7 +9,7 @@ const permissions = [
   "contacts.read", "contacts.create", "contacts.update", "contacts.delete", "contacts.import",
   "contactGroups.read", "contactGroups.create", "contactGroups.update", "contactGroups.delete",
   "campaigns.read", "campaigns.create", "campaigns.update", "campaigns.delete", "campaigns.upload",
-  "calls.read", "calls.update", "dashboard.read", "leadHistory.read",
+  "calls.read", "calls.update", "queue.read", "queue.update", "dashboard.read", "leadHistory.read",
 ];
 
 async function main() {

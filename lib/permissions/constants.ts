@@ -14,6 +14,7 @@ export const PERMISSIONS = [
   "contactGroups.read", "contactGroups.create", "contactGroups.update", "contactGroups.delete",
   "campaigns.read", "campaigns.create", "campaigns.update", "campaigns.delete", "campaigns.upload",
   "calls.read", "calls.update",
+  "queue.read", "queue.update",
   "dashboard.read", "leadHistory.read",
   "auditLogs.read", "errorLogs.read", "errorLogs.update",
 ] as const;

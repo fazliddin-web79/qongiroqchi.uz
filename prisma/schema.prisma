@@ -257,30 +257,32 @@ model Campaign {
 }
 
 model Call {
-  id           String     @id @default(uuid()) @db.Uuid
-  companyId    String     @db.Uuid
-  campaignId   String     @db.Uuid
-  contactId    String     @db.Uuid
-  phone        String
-  status       CallStatus @default(PENDING)
-  duration     Int?
-  pressedKey   String?
-  recordingUrl String?
-  errorMessage String?
-  attemptCount Int        @default(0)
-  startedAt    DateTime?
-  endedAt      DateTime?
-  company      Company    @relation(fields: [companyId], references: [id])
-  campaign     Campaign   @relation(fields: [campaignId], references: [id])
-  contact      Contact    @relation(fields: [contactId], references: [id])
-  lead         Lead?
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  id             String     @id @default(uuid()) @db.Uuid
+  companyId      String     @db.Uuid
+  campaignId     String     @db.Uuid
+  contactId      String     @db.Uuid
+  phone          String
+  providerCallId String?
+  status         CallStatus @default(PENDING)
+  duration       Int?
+  pressedKey     String?
+  recordingUrl   String?
+  errorMessage   String?
+  attemptCount   Int        @default(0)
+  startedAt      DateTime?
+  endedAt        DateTime?
+  company        Company    @relation(fields: [companyId], references: [id])
+  campaign       Campaign   @relation(fields: [campaignId], references: [id])
+  contact        Contact    @relation(fields: [contactId], references: [id])
+  lead           Lead?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
   @@unique([campaignId, contactId])
   @@index([companyId])
   @@index([campaignId])
   @@index([contactId])
+  @@index([providerCallId])
   @@index([status])
   @@index([createdAt])
 }

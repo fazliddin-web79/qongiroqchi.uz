@@ -1,6 +1,7 @@
 import { CampaignStatus, ContactStatus, LeadStatus, RoleName } from "@prisma/client";
 import { ConflictError, NotFoundError } from "@/lib/api/errors";
 import { prisma } from "@/lib/db/prisma";
+import { enqueueCampaignCalls } from "@/lib/queue/call-queue";
 
 export async function launchCampaign(campaignId: string) {
   const campaign = await prisma.campaign.findFirst({
@@ -16,7 +17,13 @@ export async function launchCampaign(campaignId: string) {
     skipDuplicates: true,
   });
   await prisma.campaign.update({ where: { id: campaign.id }, data: { status: CampaignStatus.RUNNING, startTime: campaign.startTime ?? new Date() } });
-  return { campaignId: campaign.id, createdCalls: created.count, totalContacts: campaign.contactGroup.contacts.length };
+  try {
+    const queuedJobs = await enqueueCampaignCalls(campaign.id);
+    return { campaignId: campaign.id, createdCalls: created.count, queuedJobs, totalContacts: campaign.contactGroup.contacts.length };
+  } catch (error) {
+    await prisma.campaign.update({ where: { id: campaign.id }, data: { status: CampaignStatus.FAILED } });
+    throw error;
+  }
 }
 
 async function leastBusyOperator(companyId: string) {

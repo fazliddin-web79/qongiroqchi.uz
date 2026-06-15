@@ -3,6 +3,7 @@ import { CampaignsPage } from "@/components/pages/campaigns-page";
 import { ContactsPage } from "@/components/pages/contacts-page";
 import { CallsPage } from "@/components/pages/calls-page";
 import { LeadsPage } from "@/components/pages/leads-page";
+import { QueuePage } from "@/components/pages/queue-page";
 import { DashboardPlaceholder, type DashboardPageKey } from "@/components/pages/dashboard-placeholder";
 
 const pageMap: Record<string, DashboardPageKey> = {
@@ -17,6 +18,7 @@ export default async function Page({ params }: { params: Promise<{ section: stri
   if (section === "calls") return <CallsPage />;
   if (section === "leads") return <LeadsPage />;
   if (section === "operator") return <LeadsPage operatorPanel />;
+  if (section === "queue") return <QueuePage />;
   const page = pageMap[section];
   if (!page) notFound();
   return <DashboardPlaceholder page={page} />;

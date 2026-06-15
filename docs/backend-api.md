@@ -56,8 +56,12 @@ object containing a stable `code`.
 | GET, PATCH, DELETE | `/api/campaigns/:id` | SUPER_ADMIN, ADMIN |
 | POST | `/api/campaigns/upload-audio` | SUPER_ADMIN, ADMIN; MP3/WAV/OGG/M4A up to 25 MB |
 | POST | `/api/campaigns/:id/start` | SUPER_ADMIN, ADMIN; creates contact-based call queue |
+| POST | `/api/campaigns/:id/pause` | SUPER_ADMIN, ADMIN |
+| POST | `/api/campaigns/:id/resume` | SUPER_ADMIN, ADMIN |
 | GET | `/api/calls` | SUPER_ADMIN, ADMIN |
 | GET, PATCH | `/api/calls/:id` | SUPER_ADMIN, ADMIN; records call result and can create lead |
+| GET | `/api/queue/stats` | SUPER_ADMIN, ADMIN; BullMQ counts, workers, and recent jobs |
+| POST | `/api/queue/jobs/:id/retry` | SUPER_ADMIN, ADMIN; retries a failed call job |
 | GET | `/api/dashboard/stats` | SUPER_ADMIN, ADMIN, OPERATOR |
 
 List endpoints that return paginated data accept `?page=1&limit=20`.
@@ -76,7 +80,10 @@ SUPER_ADMIN can pass `companyId` to scope lists and create records.
 - Campaign audio currently uses the local `public/uploads/audio` adapter. Replace
   it with object storage before horizontally scaling the application.
 - Starting a campaign creates one idempotent `Call` record for every active
-  contact in its selected group.
+  contact in its selected group and places each pending call into BullMQ.
+- The independent call worker uses the replaceable telephony adapter, updates
+  call results, applies campaign retry settings, and delays jobs while a
+  campaign is paused.
 - A pressed IVR key or `createLead: true` call result creates a lead and assigns
   it to the least-busy company operator.
 - Operators only receive their assigned leads and may update status, note, and
@@ -95,7 +102,7 @@ SUPER_ADMIN can pass `companyId` to scope lists and create records.
 
 ## Local Test
 
-Create `.env`, start PostgreSQL, and initialize the database:
+Create `.env`, start PostgreSQL and Redis, then initialize the database:
 
 ```bash
 cp .env.example .env
@@ -103,6 +110,13 @@ npm install
 npm run db:deploy
 npm run db:seed
 npm run dev
+```
+
+Run the queue worker in another terminal:
+
+```bash
+docker compose up -d redis
+npm run queue:worker
 ```
 
 Verify database connectivity:

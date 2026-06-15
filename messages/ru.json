@@ -25,7 +25,7 @@
     "register": { "title": "Создать аккаунт", "description": "Начните работу с AutoCall CRM.", "submit": "Создать аккаунт", "loginPrompt": "Уже есть аккаунт?", "loginLink": "Войти" },
     "forgotPassword": { "title": "Восстановить пароль", "description": "Введите email для получения ссылки.", "submit": "Отправить ссылку", "backLink": "Вернуться ко входу" }
   },
-  "nav": { "dashboard": "Панель", "companies": "Компании", "users": "Пользователи", "campaigns": "Кампании", "contacts": "Контакты", "calls": "Звонки", "leads": "Лиды", "operator": "Панель оператора", "errors": "Ошибки", "auditLogs": "Аудит", "settings": "Настройки", "billing": "Биллинг" },
+  "nav": { "dashboard": "Панель", "companies": "Компании", "users": "Пользователи", "campaigns": "Кампании", "contacts": "Контакты", "calls": "Звонки", "leads": "Лиды", "operator": "Панель оператора", "queue": "Очередь звонков", "errors": "Ошибки", "auditLogs": "Аудит", "settings": "Настройки", "billing": "Биллинг" },
   "sidebar": { "helpTitle": "Нужна помощь?", "helpDescription": "Свяжитесь с командой поддержки." }, "topbar": { "search": "Поиск..." }, "profile": { "initials": "FS", "name": "Fazliddin S.", "profile": "Профиль" }, "status": { "active": "Активно", "pending": "Ожидает", "error": "Ошибка" },
   "pages": {
     "dashboard": { "title": "Панель", "description": "Следите за ключевыми показателями платформы." },
@@ -36,6 +36,7 @@
     "calls": { "title": "Звонки", "description": "Просматривайте историю и статусы звонков.", "emptyTitle": "Звонков пока нет", "emptyDescription": "Звонки появятся после запуска кампании.", "action": "Создать кампанию" },
     "leads": { "title": "Лиды", "description": "Управляйте заинтересованными клиентами.", "emptyTitle": "Лидов пока нет", "emptyDescription": "Новые лиды появятся здесь.", "action": "Добавить лид" },
     "operator": { "title": "Панель оператора", "description": "Управляйте назначенными лидами и обратными звонками.", "emptyTitle": "Назначенных лидов нет", "emptyDescription": "Назначенные лиды появятся здесь." },
+    "queue": { "title": "Очередь звонков", "description": "Отслеживайте фоновые задания звонков и воркеры." },
     "errors": { "title": "Журнал ошибок", "description": "Отслеживайте и устраняйте системные ошибки.", "emptyTitle": "Ошибок не найдено", "emptyDescription": "Система работает нормально.", "action": "Обновить" },
     "auditLogs": { "title": "Журнал аудита", "description": "Отслеживайте важные действия.", "emptyTitle": "Записей пока нет", "emptyDescription": "Важные действия будут записаны здесь.", "action": "Экспортировать" },
     "settings": { "title": "Настройки", "description": "Управляйте настройками платформы.", "emptyTitle": "Настройки готовятся", "emptyDescription": "Настройки компании и интеграций будут добавлены далее.", "action": "Сохранить" },
@@ -58,7 +59,7 @@
       "status": { "ACTIVE": "Активен", "BLOCKED": "Заблокирован", "UNSUBSCRIBED": "Отписан" }
     },
     "campaigns": {
-      "search": "Поиск кампаний по названию...", "created": "Кампания создана.", "updated": "Кампания обновлена.", "deleted": "Кампания удалена.", "start": "Запустить кампанию", "started": "Создано звонков",
+      "search": "Поиск кампаний по названию...", "created": "Кампания создана.", "updated": "Кампания обновлена.", "deleted": "Кампания удалена.", "start": "Запустить кампанию", "started": "Заданий в очереди", "pause": "Приостановить кампанию", "paused": "Кампания приостановлена.", "resume": "Продолжить кампанию", "resumed": "Кампания продолжена.",
       "deleteConfirm": "Удалить эту кампанию?", "createTitle": "Создать кампанию", "editTitle": "Изменить кампанию", "notScheduled": "Не запланировано",
       "selectGroup": "Выберите группу контактов", "chooseAudio": "Выберите аудиофайл (MP3, WAV, OGG, M4A)",
       "fields": { "name": "Название", "description": "Описание", "group": "Группа контактов", "status": "Статус", "startTime": "Время запуска", "createdBy": "Автор", "audio": "Аудиофайл", "retryEnabled": "Включить повторы", "retryCount": "Количество повторов", "ivrSettings": "Настройки IVR (JSON)" },
@@ -74,6 +75,11 @@
       "fields": { "contact": "Контакт", "campaign": "Кампания", "source": "Источник", "status": "Статус", "operator": "Оператор", "callbackAt": "Время звонка", "note": "Заметка" },
       "status": { "NEW": "Новый", "CONTACTED": "Связались", "INTERESTED": "Заинтересован", "NOT_INTERESTED": "Не заинтересован", "SOLD": "Продано", "ARCHIVED": "Архив" },
       "actions": { "LEAD_CREATE": "Лид создан", "LEAD_RESTORE": "Лид восстановлен", "LEAD_ASSIGN": "Оператор назначен", "STATUS_CHANGE": "Статус изменён", "CALLBACK_SET": "Звонок запланирован", "NOTE_ADD": "Заметка добавлена", "LEAD_UPDATE": "Лид обновлён", "LEAD_DELETE": "Лид удалён" }
+    },
+    "queue": {
+      "refresh": "Обновить", "status": "Статус очереди", "connected": "Подключено", "workers": "Воркеры", "waiting": "Ожидают", "running": "Выполняются", "completed": "Завершены", "failed": "Ошибки", "jobs": "Последние задания", "autoRefresh": "Данные обновляются автоматически каждые 5 секунд.", "retry": "Повторить", "empty": "Заданий в очереди пока нет.",
+      "fields": { "campaign": "Кампания", "phone": "Телефон", "state": "Состояние", "attempts": "Попытки", "createdAt": "Создано", "error": "Ошибка" },
+      "states": { "waiting": "Ожидает", "active": "Выполняется", "delayed": "Отложено", "completed": "Завершено", "failed": "Ошибка" }
     }
   }
 }

@@ -8,6 +8,7 @@ AutoCall CRM is a production-oriented starter foundation for a multilingual auto
 - TypeScript
 - Tailwind CSS with CSS-variable color tokens
 - PostgreSQL and Prisma ORM
+- Redis and BullMQ background call queue
 - Prepared custom JWT authentication structure
 - Cookie-based English, Uzbek, and Russian i18n
 - Light, dark, and system themes with `next-themes`
@@ -27,6 +28,9 @@ AUTH_SECRET="replace-with-a-long-random-secret"
 REFRESH_TOKEN_SECRET="replace-with-another-long-random-secret"
 AUTH_ENFORCED="true"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
+REDIS_URL="redis://localhost:6379"
+CALL_QUEUE_CONCURRENCY="5"
+TELEPHONY_ADAPTER="mock"
 SUPER_ADMIN_EMAIL="superadmin@autocall.local"
 SUPER_ADMIN_PASSWORD="ChangeMe123!"
 ```
@@ -35,6 +39,15 @@ SUPER_ADMIN_PASSWORD="ChangeMe123!"
 the JWT-backed login flow.
 
 ## Development
+
+Start Redis and the call worker in separate terminals:
+
+```bash
+docker compose up -d redis
+npm run queue:worker
+```
+
+Then run the web application:
 
 ```bash
 npm run dev
@@ -48,6 +61,7 @@ Useful commands:
 npm run typecheck
 npm run build
 npm run start
+npm run queue:worker
 npm run db:generate
 npm run db:deploy
 npm run db:seed
@@ -97,9 +111,12 @@ lib/db/               Prisma client
 lib/i18n/             Locale configuration and server dictionary loading
 lib/logging/          Audit and backend error persistence
 lib/permissions/      Role and permission helpers
+lib/queue/            BullMQ queue configuration and operations
+lib/telephony/        Replaceable telephony adapter and mock provider
 messages/             Translation dictionaries
 prisma/               PostgreSQL schema, migrations, and seed
 types/                Shared TypeScript types
+workers/              Independently deployed BullMQ workers
 ```
 
 ## Backend And Authentication
@@ -114,6 +131,17 @@ types/                Shared TypeScript types
 - `lib/permissions` enforces global SUPER_ADMIN, company-scoped ADMIN, and
   assigned-lead-only OPERATOR access.
 - `middleware.ts` protects dashboard pages when `AUTH_ENFORCED=true`.
+
+## Auto-Call Queue
+
+Starting a campaign creates idempotent `Call` records and adds one BullMQ job
+per pending call. Run `npm run queue:worker` as a separate process. The worker
+uses the mock telephony adapter, updates call statuses, creates IVR leads, and
+honors campaign retries, pause, and resume.
+
+The adapter contract lives in `lib/telephony/types.ts`. Implement that interface
+and update `lib/telephony/index.ts` to add Asterisk or a SIP provider without
+changing queue or campaign code.
 
 See [`docs/backend-api.md`](docs/backend-api.md) for the endpoint list, auth flow,
 role scope, and curl-based test instructions.

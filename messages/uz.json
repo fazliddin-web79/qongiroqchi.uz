@@ -1,0 +1,81 @@
+{
+  "brand": { "name": "AutoCall CRM" },
+  "notFound": { "title": "Sahifa topilmadi", "description": "Siz izlayotgan sahifa mavjud emas yoki ko'chirilgan.", "action": "Bosh sahifaga qaytish" },
+  "common": {
+    "getStarted": "Boshlash", "learnMore": "Batafsil", "signIn": "Kirish", "signOut": "Chiqish",
+    "language": "Tilni tanlash", "theme": "Mavzuni tanlash", "menu": "Menyuni ochish", "close": "Yopish"
+  },
+  "languages": { "uz": "O'zbekcha", "en": "English", "ru": "Русский" },
+  "themes": { "light": "Yorug' rejim", "dark": "Qorong'i rejim", "system": "Tizim rejimi" },
+  "public": { "nav": { "features": "Imkoniyatlar", "pricing": "Tariflar", "contact": "Aloqa" } },
+  "footer": { "tagline": "Avtomatik qo'ng'iroqlar uchun sodda CRM platforma.", "rights": "© 2026 AutoCall CRM. Barcha huquqlar himoyalangan." },
+  "home": {
+    "eyebrow": "Zamonaviy auto-calling CRM",
+    "title": "Qo'ng'iroqlarni avtomatlashtiring, mijozlar bilan yaxshiroq ishlang",
+    "description": "Kampaniyalar, kontaktlar, qo'ng'iroqlar va leadlarni bitta sodda platformada boshqaring.",
+    "featuresTitle": "Ish jarayonini soddalashtiradigan asos",
+    "featuresDescription": "Jamoangizga tushunarli, xavfsiz va kengayishga tayyor platforma.",
+    "stats": {
+      "companies": { "value": "100+", "label": "Faol kompaniya" },
+      "calls": { "value": "1M+", "label": "Qo'ng'iroq" },
+      "uptime": { "value": "99.9%", "label": "Barqarorlik" }
+    },
+    "preview": {
+      "title": "Bugungi ko'rsatkichlar", "description": "Asosiy metrikalar bir qarashda",
+      "campaigns": "Faol kampaniyalar", "campaignsValue": "24", "contacts": "Kontaktlar", "contactsValue": "8,420",
+      "calls": "Qo'ng'iroqlar", "callsValue": "12,480", "leads": "Yangi leadlar", "leadsValue": "1,204"
+    }
+  },
+  "features": {
+    "campaigns": { "title": "Kampaniyalar", "description": "Auto-calling kampaniyalarni bir joydan boshqaring." },
+    "contacts": { "title": "Kontaktlar", "description": "Mijoz ma'lumotlarini tartibli va xavfsiz saqlang." },
+    "analytics": { "title": "Tahlil", "description": "Natijalarni sodda ko'rsatkichlar orqali kuzating." },
+    "security": { "title": "Xavfsizlik", "description": "Rollar va ruxsatlar bilan kirishni boshqaring." },
+    "automation": { "title": "Avtomatlashtirish", "description": "Takroriy ishlarni avtomatik jarayonlarga aylantiring." },
+    "calls": { "title": "Qo'ng'iroqlar", "description": "Qo'ng'iroqlar tarixi va holatini kuzating." }
+  },
+  "publicPages": {
+    "features": { "title": "Platforma imkoniyatlari", "description": "AutoCall CRM jamoangizga beradigan asosiy imkoniyatlar.", "emptyTitle": "Imkoniyatlar katalogi tayyorlanmoqda", "emptyDescription": "Bu bo'lim keyingi bosqichda haqiqiy mahsulot imkoniyatlari bilan to'ldiriladi.", "action": "Demo so'rash" },
+    "pricing": { "title": "Sodda va tushunarli tariflar", "description": "Kompaniyangiz hajmiga mos tarifni tanlang.", "emptyTitle": "Tariflar tayyorlanmoqda", "emptyDescription": "Narxlar va limitlar keyingi bosqichda biznes qoidalari bilan qo'shiladi.", "action": "Biz bilan bog'lanish" },
+    "contact": { "title": "Biz bilan bog'laning", "description": "Savollaringiz va takliflaringiz uchun jamoamiz tayyor.", "emptyTitle": "Aloqa formasi tayyorlanmoqda", "emptyDescription": "Keyingi bosqichda forma va murojaatlarni boshqarish jarayoni qo'shiladi.", "action": "Xabar yuborish" }
+  },
+  "auth": {
+    "fields": { "name": "Ism", "company": "Kompaniya", "email": "Email", "password": "Parol" },
+    "placeholders": { "name": "Ismingiz", "company": "Kompaniya nomi", "email": "siz@kompaniya.uz", "password": "Parolingiz" },
+    "login": { "title": "Xush kelibsiz", "description": "Hisobingizga kirish uchun ma'lumotlarni kiriting.", "submit": "Kirish", "registerPrompt": "Hisobingiz yo'qmi?", "registerLink": "Ro'yxatdan o'tish", "forgotLink": "Parolni unutdingizmi?" },
+    "register": { "title": "Hisob yaratish", "description": "AutoCall CRM bilan ishlashni boshlang.", "submit": "Ro'yxatdan o'tish", "loginPrompt": "Hisobingiz bormi?", "loginLink": "Kirish" },
+    "forgotPassword": { "title": "Parolni tiklash", "description": "Tiklash havolasi uchun emailingizni kiriting.", "submit": "Tiklash havolasini yuborish", "backLink": "Kirish sahifasiga qaytish" }
+  },
+  "nav": {
+    "dashboard": "Dashboard", "companies": "Kompaniyalar", "users": "Foydalanuvchilar", "campaigns": "Kampaniyalar",
+    "contacts": "Kontaktlar", "calls": "Qo'ng'iroqlar", "leads": "Leadlar", "errors": "Xatoliklar",
+    "auditLogs": "Audit loglar", "settings": "Sozlamalar", "billing": "Billing"
+  },
+  "sidebar": { "helpTitle": "Yordam kerakmi?", "helpDescription": "Qo'llab-quvvatlash jamoasi bilan bog'laning." },
+  "topbar": { "search": "Qidirish..." },
+  "profile": { "initials": "FS", "name": "Fazliddin S.", "profile": "Profil" },
+  "status": { "active": "Faol", "pending": "Kutilmoqda", "error": "Xatolik" },
+  "pages": {
+    "dashboard": { "title": "Dashboard", "description": "Platformadagi asosiy ko'rsatkichlarni kuzating." },
+    "companies": { "title": "Kompaniyalar", "description": "Platformadagi kompaniyalarni boshqaring.", "emptyTitle": "Kompaniyalar hali yo'q", "emptyDescription": "Birinchi kompaniyani qo'shib boshqaruvni boshlang.", "action": "Kompaniya qo'shish" },
+    "users": { "title": "Foydalanuvchilar", "description": "Jamoa a'zolari va ularning kirishini boshqaring.", "emptyTitle": "Foydalanuvchilar hali yo'q", "emptyDescription": "Jamoangizning birinchi a'zosini taklif qiling.", "action": "Foydalanuvchi qo'shish" },
+    "campaigns": { "title": "Kampaniyalar", "description": "Auto-calling kampaniyalarini yarating va kuzating.", "emptyTitle": "Kampaniyalar hali yo'q", "emptyDescription": "Birinchi qo'ng'iroq kampaniyangizni yarating.", "action": "Kampaniya yaratish" },
+    "contacts": { "title": "Kontaktlar", "description": "Mijozlar va kontakt ro'yxatlarini boshqaring.", "emptyTitle": "Kontaktlar hali yo'q", "emptyDescription": "Kontaktlarni qo'shing yoki fayldan import qiling.", "action": "Kontakt qo'shish" },
+    "calls": { "title": "Qo'ng'iroqlar", "description": "Barcha qo'ng'iroqlar tarixi va holatini ko'ring.", "emptyTitle": "Qo'ng'iroqlar hali yo'q", "emptyDescription": "Kampaniya boshlanganda qo'ng'iroqlar shu yerda ko'rinadi.", "action": "Kampaniya yaratish" },
+    "leads": { "title": "Leadlar", "description": "Qiziqish bildirgan mijozlarni boshqaring.", "emptyTitle": "Leadlar hali yo'q", "emptyDescription": "Yangi leadlar aniqlanganda shu yerda ko'rinadi.", "action": "Lead qo'shish" },
+    "errors": { "title": "Xatolik loglari", "description": "Tizim xatoliklarini kuzating va hal qiling.", "emptyTitle": "Xatoliklar topilmadi", "emptyDescription": "Tizim yaxshi ishlamoqda. Yangi xatoliklar shu yerda ko'rinadi.", "action": "Yangilash" },
+    "auditLogs": { "title": "Audit loglar", "description": "Muhim foydalanuvchi va tizim amallarini kuzating.", "emptyTitle": "Audit yozuvlari hali yo'q", "emptyDescription": "Muhim amallar bajarilganda shu yerda yoziladi.", "action": "Eksport qilish" },
+    "settings": { "title": "Sozlamalar", "description": "Platforma va kompaniya sozlamalarini boshqaring.", "emptyTitle": "Sozlamalar bo'limi tayyorlanmoqda", "emptyDescription": "Kompaniya va integratsiya sozlamalari keyingi bosqichda qo'shiladi.", "action": "Saqlash" },
+    "billing": { "title": "Billing", "description": "Tarif, hisob va to'lovlarni boshqaring.", "emptyTitle": "Billing ma'lumotlari hali yo'q", "emptyDescription": "Tarif va to'lov integratsiyasi keyingi bosqichda qo'shiladi.", "action": "Tarifni tanlash" }
+  },
+  "dashboard": {
+    "stats": { "companies": "Kompaniyalar", "campaigns": "Faol kampaniyalar", "calls": "Jami qo'ng'iroqlar", "leads": "Yangi leadlar" },
+    "recent": { "title": "So'nggi kampaniyalar", "description": "Joriy kampaniyalarning qisqa holati." },
+    "table": { "campaign": "Kampaniya", "company": "Kompaniya", "calls": "Qo'ng'iroqlar", "status": "Holat" },
+    "rows": {
+      "summer": { "campaign": "Yozgi taklif", "company": "Acme Group", "calls": "3,840" },
+      "welcome": { "campaign": "Yangi mijozlar", "company": "Nova Tech", "calls": "1,920" },
+      "payment": { "campaign": "To'lov eslatmasi", "company": "Atlas Market", "calls": "2,730" }
+    }
+  }
+}

@@ -2,3 +2,7 @@
 node_modules/
 dist/
 *.tsbuildinfo
+.next/
+.env
+.env.local
+coverage/

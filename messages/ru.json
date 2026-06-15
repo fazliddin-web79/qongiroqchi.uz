@@ -1,0 +1,47 @@
+{
+  "brand": { "name": "AutoCall CRM" },
+  "notFound": { "title": "Страница не найдена", "description": "Страница не существует или была перемещена.", "action": "Вернуться на главную" },
+  "common": { "getStarted": "Начать", "learnMore": "Подробнее", "signIn": "Войти", "signOut": "Выйти", "language": "Выбрать язык", "theme": "Выбрать тему", "menu": "Открыть меню", "close": "Закрыть" },
+  "languages": { "uz": "O'zbekcha", "en": "English", "ru": "Русский" },
+  "themes": { "light": "Светлая тема", "dark": "Тёмная тема", "system": "Системная тема" },
+  "public": { "nav": { "features": "Возможности", "pricing": "Тарифы", "contact": "Контакты" } },
+  "footer": { "tagline": "Простая CRM-платформа для автоматических звонков.", "rights": "© 2026 AutoCall CRM. Все права защищены." },
+  "home": {
+    "eyebrow": "Современная CRM для автозвонков", "title": "Автоматизируйте звонки и улучшайте работу с клиентами", "description": "Управляйте кампаниями, контактами, звонками и лидами на одной простой платформе.", "featuresTitle": "Основа, упрощающая работу", "featuresDescription": "Понятная, безопасная и масштабируемая платформа для вашей команды.",
+    "stats": { "companies": { "value": "100+", "label": "Активных компаний" }, "calls": { "value": "1M+", "label": "Звонков" }, "uptime": { "value": "99.9%", "label": "Стабильность" } },
+    "preview": { "title": "Показатели за сегодня", "description": "Основные метрики в одном месте", "campaigns": "Активные кампании", "campaignsValue": "24", "contacts": "Контакты", "contactsValue": "8,420", "calls": "Звонки", "callsValue": "12,480", "leads": "Новые лиды", "leadsValue": "1,204" }
+  },
+  "features": {
+    "campaigns": { "title": "Кампании", "description": "Управляйте кампаниями автозвонков в одном месте." }, "contacts": { "title": "Контакты", "description": "Храните данные клиентов упорядоченно и безопасно." }, "analytics": { "title": "Аналитика", "description": "Отслеживайте результаты с помощью понятных метрик." }, "security": { "title": "Безопасность", "description": "Управляйте доступом через роли и разрешения." }, "automation": { "title": "Автоматизация", "description": "Превращайте повторяющиеся задачи в автоматические процессы." }, "calls": { "title": "Звонки", "description": "Отслеживайте историю и статус звонков." }
+  },
+  "publicPages": {
+    "features": { "title": "Возможности платформы", "description": "Основные возможности AutoCall CRM для вашей команды.", "emptyTitle": "Каталог возможностей готовится", "emptyDescription": "Раздел будет заполнен реальными возможностями продукта на следующем этапе.", "action": "Запросить демо" },
+    "pricing": { "title": "Простые и понятные тарифы", "description": "Выберите тариф для размера вашей компании.", "emptyTitle": "Тарифы готовятся", "emptyDescription": "Цены и лимиты будут добавлены вместе с бизнес-правилами.", "action": "Связаться с нами" },
+    "contact": { "title": "Свяжитесь с нами", "description": "Наша команда готова ответить на ваши вопросы.", "emptyTitle": "Форма связи готовится", "emptyDescription": "Форма и процесс обработки обращений будут добавлены далее.", "action": "Отправить сообщение" }
+  },
+  "auth": {
+    "fields": { "name": "Имя", "company": "Компания", "email": "Email", "password": "Пароль" }, "placeholders": { "name": "Ваше имя", "company": "Название компании", "email": "you@company.com", "password": "Ваш пароль" },
+    "login": { "title": "С возвращением", "description": "Введите данные для входа в аккаунт.", "submit": "Войти", "registerPrompt": "Нет аккаунта?", "registerLink": "Создать аккаунт", "forgotLink": "Забыли пароль?" },
+    "register": { "title": "Создать аккаунт", "description": "Начните работу с AutoCall CRM.", "submit": "Создать аккаунт", "loginPrompt": "Уже есть аккаунт?", "loginLink": "Войти" },
+    "forgotPassword": { "title": "Восстановить пароль", "description": "Введите email для получения ссылки.", "submit": "Отправить ссылку", "backLink": "Вернуться ко входу" }
+  },
+  "nav": { "dashboard": "Панель", "companies": "Компании", "users": "Пользователи", "campaigns": "Кампании", "contacts": "Контакты", "calls": "Звонки", "leads": "Лиды", "errors": "Ошибки", "auditLogs": "Аудит", "settings": "Настройки", "billing": "Биллинг" },
+  "sidebar": { "helpTitle": "Нужна помощь?", "helpDescription": "Свяжитесь с командой поддержки." }, "topbar": { "search": "Поиск..." }, "profile": { "initials": "FS", "name": "Fazliddin S.", "profile": "Профиль" }, "status": { "active": "Активно", "pending": "Ожидает", "error": "Ошибка" },
+  "pages": {
+    "dashboard": { "title": "Панель", "description": "Следите за ключевыми показателями платформы." },
+    "companies": { "title": "Компании", "description": "Управляйте компаниями на платформе.", "emptyTitle": "Компаний пока нет", "emptyDescription": "Добавьте первую компанию.", "action": "Добавить компанию" },
+    "users": { "title": "Пользователи", "description": "Управляйте участниками команды и доступом.", "emptyTitle": "Пользователей пока нет", "emptyDescription": "Пригласите первого участника команды.", "action": "Добавить пользователя" },
+    "campaigns": { "title": "Кампании", "description": "Создавайте и отслеживайте кампании автозвонков.", "emptyTitle": "Кампаний пока нет", "emptyDescription": "Создайте первую кампанию звонков.", "action": "Создать кампанию" },
+    "contacts": { "title": "Контакты", "description": "Управляйте клиентами и списками контактов.", "emptyTitle": "Контактов пока нет", "emptyDescription": "Добавьте или импортируйте контакты.", "action": "Добавить контакт" },
+    "calls": { "title": "Звонки", "description": "Просматривайте историю и статусы звонков.", "emptyTitle": "Звонков пока нет", "emptyDescription": "Звонки появятся после запуска кампании.", "action": "Создать кампанию" },
+    "leads": { "title": "Лиды", "description": "Управляйте заинтересованными клиентами.", "emptyTitle": "Лидов пока нет", "emptyDescription": "Новые лиды появятся здесь.", "action": "Добавить лид" },
+    "errors": { "title": "Журнал ошибок", "description": "Отслеживайте и устраняйте системные ошибки.", "emptyTitle": "Ошибок не найдено", "emptyDescription": "Система работает нормально.", "action": "Обновить" },
+    "auditLogs": { "title": "Журнал аудита", "description": "Отслеживайте важные действия.", "emptyTitle": "Записей пока нет", "emptyDescription": "Важные действия будут записаны здесь.", "action": "Экспортировать" },
+    "settings": { "title": "Настройки", "description": "Управляйте настройками платформы.", "emptyTitle": "Настройки готовятся", "emptyDescription": "Настройки компании и интеграций будут добавлены далее.", "action": "Сохранить" },
+    "billing": { "title": "Биллинг", "description": "Управляйте тарифом, счетами и платежами.", "emptyTitle": "Данных пока нет", "emptyDescription": "Тарифы и платежи будут добавлены далее.", "action": "Выбрать тариф" }
+  },
+  "dashboard": {
+    "stats": { "companies": "Компании", "campaigns": "Активные кампании", "calls": "Всего звонков", "leads": "Новые лиды" }, "recent": { "title": "Последние кампании", "description": "Краткий статус текущих кампаний." }, "table": { "campaign": "Кампания", "company": "Компания", "calls": "Звонки", "status": "Статус" },
+    "rows": { "summer": { "campaign": "Летнее предложение", "company": "Acme Group", "calls": "3,840" }, "welcome": { "campaign": "Новые клиенты", "company": "Nova Tech", "calls": "1,920" }, "payment": { "campaign": "Напоминание об оплате", "company": "Atlas Market", "calls": "2,730" } }
+  }
+}

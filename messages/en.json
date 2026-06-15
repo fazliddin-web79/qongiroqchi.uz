@@ -1,0 +1,47 @@
+{
+  "brand": { "name": "AutoCall CRM" },
+  "notFound": { "title": "Page not found", "description": "The page you are looking for does not exist or has moved.", "action": "Return home" },
+  "common": { "getStarted": "Get started", "learnMore": "Learn more", "signIn": "Sign in", "signOut": "Sign out", "language": "Choose language", "theme": "Choose theme", "menu": "Open menu", "close": "Close" },
+  "languages": { "uz": "O'zbekcha", "en": "English", "ru": "Русский" },
+  "themes": { "light": "Light mode", "dark": "Dark mode", "system": "System mode" },
+  "public": { "nav": { "features": "Features", "pricing": "Pricing", "contact": "Contact" } },
+  "footer": { "tagline": "A simple CRM platform for automated calls.", "rights": "© 2026 AutoCall CRM. All rights reserved." },
+  "home": {
+    "eyebrow": "Modern auto-calling CRM", "title": "Automate calls and build better customer relationships", "description": "Manage campaigns, contacts, calls, and leads in one simple platform.", "featuresTitle": "A foundation that simplifies work", "featuresDescription": "A clear, secure, and scalable platform for your team.",
+    "stats": { "companies": { "value": "100+", "label": "Active companies" }, "calls": { "value": "1M+", "label": "Calls" }, "uptime": { "value": "99.9%", "label": "Uptime" } },
+    "preview": { "title": "Today's overview", "description": "Key metrics at a glance", "campaigns": "Active campaigns", "campaignsValue": "24", "contacts": "Contacts", "contactsValue": "8,420", "calls": "Calls", "callsValue": "12,480", "leads": "New leads", "leadsValue": "1,204" }
+  },
+  "features": {
+    "campaigns": { "title": "Campaigns", "description": "Manage auto-calling campaigns from one place." }, "contacts": { "title": "Contacts", "description": "Keep customer data organized and secure." }, "analytics": { "title": "Analytics", "description": "Track results through clear metrics." }, "security": { "title": "Security", "description": "Control access with roles and permissions." }, "automation": { "title": "Automation", "description": "Turn repetitive work into automated flows." }, "calls": { "title": "Calls", "description": "Track call history and status." }
+  },
+  "publicPages": {
+    "features": { "title": "Platform features", "description": "Core capabilities AutoCall CRM brings to your team.", "emptyTitle": "Feature catalog is being prepared", "emptyDescription": "This section will be filled with real product capabilities in the next phase.", "action": "Request demo" },
+    "pricing": { "title": "Simple, transparent pricing", "description": "Choose a plan that fits your company.", "emptyTitle": "Plans are being prepared", "emptyDescription": "Pricing and limits will be added with business rules in the next phase.", "action": "Contact us" },
+    "contact": { "title": "Contact us", "description": "Our team is ready for your questions and suggestions.", "emptyTitle": "Contact form is being prepared", "emptyDescription": "The form and inquiry workflow will be added in the next phase.", "action": "Send message" }
+  },
+  "auth": {
+    "fields": { "name": "Name", "company": "Company", "email": "Email", "password": "Password" }, "placeholders": { "name": "Your name", "company": "Company name", "email": "you@company.com", "password": "Your password" },
+    "login": { "title": "Welcome back", "description": "Enter your details to access your account.", "submit": "Sign in", "registerPrompt": "No account yet?", "registerLink": "Create account", "forgotLink": "Forgot password?" },
+    "register": { "title": "Create account", "description": "Start working with AutoCall CRM.", "submit": "Create account", "loginPrompt": "Already have an account?", "loginLink": "Sign in" },
+    "forgotPassword": { "title": "Reset password", "description": "Enter your email to receive a reset link.", "submit": "Send reset link", "backLink": "Back to sign in" }
+  },
+  "nav": { "dashboard": "Dashboard", "companies": "Companies", "users": "Users", "campaigns": "Campaigns", "contacts": "Contacts", "calls": "Calls", "leads": "Leads", "errors": "Error logs", "auditLogs": "Audit logs", "settings": "Settings", "billing": "Billing" },
+  "sidebar": { "helpTitle": "Need help?", "helpDescription": "Contact our support team." }, "topbar": { "search": "Search..." }, "profile": { "initials": "FS", "name": "Fazliddin S.", "profile": "Profile" }, "status": { "active": "Active", "pending": "Pending", "error": "Error" },
+  "pages": {
+    "dashboard": { "title": "Dashboard", "description": "Monitor key platform metrics." },
+    "companies": { "title": "Companies", "description": "Manage companies on the platform.", "emptyTitle": "No companies yet", "emptyDescription": "Add the first company to start managing it.", "action": "Add company" },
+    "users": { "title": "Users", "description": "Manage team members and access.", "emptyTitle": "No users yet", "emptyDescription": "Invite the first member of your team.", "action": "Add user" },
+    "campaigns": { "title": "Campaigns", "description": "Create and monitor auto-calling campaigns.", "emptyTitle": "No campaigns yet", "emptyDescription": "Create your first calling campaign.", "action": "Create campaign" },
+    "contacts": { "title": "Contacts", "description": "Manage customers and contact lists.", "emptyTitle": "No contacts yet", "emptyDescription": "Add contacts or import them from a file.", "action": "Add contact" },
+    "calls": { "title": "Calls", "description": "Review all call history and statuses.", "emptyTitle": "No calls yet", "emptyDescription": "Calls will appear here after a campaign starts.", "action": "Create campaign" },
+    "leads": { "title": "Leads", "description": "Manage interested prospects.", "emptyTitle": "No leads yet", "emptyDescription": "New leads will appear here when identified.", "action": "Add lead" },
+    "errors": { "title": "Error logs", "description": "Monitor and resolve system errors.", "emptyTitle": "No errors found", "emptyDescription": "The system is healthy. New errors will appear here.", "action": "Refresh" },
+    "auditLogs": { "title": "Audit logs", "description": "Track important user and system actions.", "emptyTitle": "No audit records yet", "emptyDescription": "Important actions will be recorded here.", "action": "Export" },
+    "settings": { "title": "Settings", "description": "Manage platform and company settings.", "emptyTitle": "Settings are being prepared", "emptyDescription": "Company and integration settings will be added next.", "action": "Save" },
+    "billing": { "title": "Billing", "description": "Manage plan, invoices, and payments.", "emptyTitle": "No billing data yet", "emptyDescription": "Plans and payment integrations will be added next.", "action": "Choose plan" }
+  },
+  "dashboard": {
+    "stats": { "companies": "Companies", "campaigns": "Active campaigns", "calls": "Total calls", "leads": "New leads" }, "recent": { "title": "Recent campaigns", "description": "A quick view of current campaign status." }, "table": { "campaign": "Campaign", "company": "Company", "calls": "Calls", "status": "Status" },
+    "rows": { "summer": { "campaign": "Summer offer", "company": "Acme Group", "calls": "3,840" }, "welcome": { "campaign": "New customers", "company": "Nova Tech", "calls": "1,920" }, "payment": { "campaign": "Payment reminder", "company": "Atlas Market", "calls": "2,730" } }
+  }
+}

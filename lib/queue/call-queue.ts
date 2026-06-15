@@ -2,6 +2,7 @@ import { Queue, type Job, type JobState } from "bullmq";
 import { ConflictError, NotFoundError } from "@/lib/api/errors";
 import { prisma } from "@/lib/db/prisma";
 import { CALL_QUEUE_NAME, redisConnectionOptions } from "./config";
+import { getCompanySettings } from "@/lib/settings/service";
 
 export type CallJobData = {
   callId: string;
@@ -54,7 +55,9 @@ export async function enqueueCampaignCalls(campaignId: string) {
   if (!campaign) throw new NotFoundError("Campaign");
 
   const queue = getCallQueue();
-  const jobs = await queue.addBulk(campaign.calls.map((call) => ({
+  const settings = await getCompanySettings(campaign.companyId);
+  const speedLimit = Math.max(1, settings.callSpeedLimit);
+  const jobs = await queue.addBulk(campaign.calls.map((call, index) => ({
     name: "place-call",
     data: {
       callId: call.id,
@@ -67,6 +70,7 @@ export async function enqueueCampaignCalls(campaignId: string) {
     opts: {
       jobId: call.id,
       attempts: campaign.retryEnabled ? Math.max(1, campaign.retryCount + 1) : 1,
+      delay: Math.floor(index / speedLimit) * 60_000,
     },
   })));
   return jobs.length;

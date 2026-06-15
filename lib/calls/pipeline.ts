@@ -2,6 +2,8 @@ import { CampaignStatus, ContactStatus, LeadStatus, RoleName } from "@prisma/cli
 import { ConflictError, NotFoundError } from "@/lib/api/errors";
 import { prisma } from "@/lib/db/prisma";
 import { enqueueCampaignCalls } from "@/lib/queue/call-queue";
+import { assertCallLimit } from "@/lib/billing/service";
+import { notifyNewLead } from "@/lib/telegram/service";
 
 export async function launchCampaign(campaignId: string) {
   const campaign = await prisma.campaign.findFirst({
@@ -11,6 +13,9 @@ export async function launchCampaign(campaignId: string) {
   if (!campaign) throw new NotFoundError("Campaign");
   if (campaign.status === CampaignStatus.COMPLETED) throw new ConflictError("Completed campaign cannot be started again");
   if (!campaign.contactGroup.contacts.length) throw new ConflictError("Campaign contact group has no active contacts");
+  const existingContacts = await prisma.call.findMany({ where: { campaignId: campaign.id }, select: { contactId: true } });
+  const existingIds = new Set(existingContacts.map(({ contactId }) => contactId));
+  await assertCallLimit(campaign.companyId, campaign.contactGroup.contacts.filter(({ id }) => !existingIds.has(id)).length);
 
   const created = await prisma.call.createMany({
     data: campaign.contactGroup.contacts.map((contact) => ({ companyId: campaign.companyId, campaignId: campaign.id, contactId: contact.id, phone: contact.phone })),
@@ -57,5 +62,6 @@ export async function createLeadFromCall(callId: string, input?: { source?: stri
       history: { create: { action: "LEAD_CREATE", toStatus: LeadStatus.NEW, note: input?.note, userId: input?.actorId } },
     },
   });
+  await notifyNewLead(lead.id);
   return { lead, created: true };
 }

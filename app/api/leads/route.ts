@@ -10,6 +10,7 @@ import { recordAudit } from "@/lib/logging/audit-log";
 import { companyIdForWrite, companyWhereForRequest } from "@/lib/modules/scope";
 import { isOperator, leadWhere } from "@/lib/permissions";
 import { ROLES } from "@/lib/permissions/constants";
+import { notifyNewLead } from "@/lib/telegram/service";
 
 const schema = z.object({
   companyId: z.uuid().optional(),
@@ -67,6 +68,7 @@ export const POST = withApiHandler(async (request) => {
     data: { companyId, campaignId, contactId, callId: input.callId, source: input.source, status: input.status, assignedToId: input.assignedToId, note: input.note, callbackAt: input.callbackAt ? new Date(input.callbackAt) : null, history: { create: { action: "LEAD_CREATE", toStatus: input.status, note: input.note, userId: auth.id } } },
     include: { contact: { select: { id: true, fullName: true, phone: true } }, campaign: { select: { id: true, name: true } }, assignedTo: { select: { id: true, name: true } } },
   });
+  await notifyNewLead(lead.id);
   await recordAudit({ action: "LEAD_CREATE", entity: "Lead", entityId: lead.id, user: auth, request });
   return apiSuccess(lead, "Lead created", 201);
 });

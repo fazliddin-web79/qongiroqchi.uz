@@ -9,10 +9,11 @@ const permissions = [
   "contacts.read", "contacts.create", "contacts.update", "contacts.delete", "contacts.import",
   "contactGroups.read", "contactGroups.create", "contactGroups.update", "contactGroups.delete",
   "campaigns.read", "campaigns.create", "campaigns.update", "campaigns.delete", "campaigns.upload",
-  "calls.read", "calls.update", "queue.read", "queue.update", "dashboard.read", "leadHistory.read",
+  "calls.read", "calls.update", "queue.read", "queue.update", "settings.read", "settings.update", "billing.read", "billing.update", "dashboard.read", "leadHistory.read",
 ];
 
 async function main() {
+  await prisma.plan.upsert({ where: { name: "Free" }, update: { deletedAt: null }, create: { name: "Free", monthlyPrice: 0, callLimit: 1000, userLimit: 5, campaignLimit: 5, features: { telegram: true, queue: true } } });
   const records = await Promise.all(permissions.map((key) => prisma.permission.upsert({ where: { key }, update: { deletedAt: null }, create: { key } })));
   let role = await prisma.role.findFirst({ where: { name: RoleName.SUPER_ADMIN, companyId: null } });
   role = role

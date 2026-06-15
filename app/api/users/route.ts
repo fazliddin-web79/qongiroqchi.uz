@@ -11,6 +11,7 @@ import { recordAudit } from "@/lib/logging/audit-log";
 import { isSuperAdmin } from "@/lib/permissions";
 import { companyWhereForRequest } from "@/lib/modules/scope";
 import { ROLES } from "@/lib/permissions/constants";
+import { assertUserLimit } from "@/lib/billing/service";
 
 const createSchema = z.object({
   name: z.string().min(2).max(120),
@@ -36,6 +37,7 @@ export const POST = withApiHandler(async (request) => {
   const input = createSchema.parse(await request.json());
   const companyId = isSuperAdmin(auth) ? input.companyId : auth.companyId ?? undefined;
   if (!companyId) throw new ForbiddenError("A company is required for this user");
+  await assertUserLimit(companyId);
   const role = await prisma.role.findFirst({ where: { id: input.roleId, deletedAt: null, companyId } });
   if (!role || role.name === RoleName.SUPER_ADMIN) throw new NotFoundError("Company role");
   const user = await prisma.user.create({ data: { name: input.name, email: input.email, passwordHash: await hashPassword(input.password), companyId, roles: { create: { roleId: role.id } } }, select: { id: true, name: true, email: true, companyId: true, createdAt: true } });

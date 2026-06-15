@@ -15,6 +15,7 @@ export const PERMISSIONS = [
   "campaigns.read", "campaigns.create", "campaigns.update", "campaigns.delete", "campaigns.upload",
   "calls.read", "calls.update",
   "queue.read", "queue.update",
+  "settings.read", "settings.update", "billing.read", "billing.update",
   "dashboard.read", "leadHistory.read",
   "auditLogs.read", "errorLogs.read", "errorLogs.update",
 ] as const;

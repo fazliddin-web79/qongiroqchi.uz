@@ -29,21 +29,72 @@ model User {
 }
 
 model Company {
-  id        String         @id @default(uuid()) @db.Uuid
-  name      String
-  slug      String         @unique
-  users     User[]
-  roles     Role[]
-  auditLogs AuditLog[]
-  errorLogs ErrorLog[]
-  leads     Lead[]
-  contacts  Contact[]
-  groups    ContactGroup[]
-  campaigns Campaign[]
-  calls     Call[]
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  id            String                @id @default(uuid()) @db.Uuid
+  name          String
+  slug          String                @unique
+  users         User[]
+  roles         Role[]
+  auditLogs     AuditLog[]
+  errorLogs     ErrorLog[]
+  leads         Lead[]
+  contacts      Contact[]
+  groups        ContactGroup[]
+  campaigns     Campaign[]
+  calls         Call[]
+  settings      CompanySetting?
+  subscriptions CompanySubscription[]
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  deletedAt     DateTime?
+}
+
+model CompanySetting {
+  id                String    @id @default(uuid()) @db.Uuid
+  companyId         String    @unique @db.Uuid
+  telegramBotToken  String?
+  telegramChatId    String?
+  defaultRetryCount Int       @default(0)
+  workingHours      Json      @default("{\"enabled\":false,\"start\":\"09:00\",\"end\":\"18:00\",\"days\":[1,2,3,4,5]}")
+  callSpeedLimit    Int       @default(60)
+  defaultLanguage   String    @default("uz")
+  timezone          String    @default("Asia/Tashkent")
+  company           Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+}
+
+model Plan {
+  id            String                @id @default(uuid()) @db.Uuid
+  name          String                @unique
+  monthlyPrice  Decimal               @db.Decimal(12, 2)
+  callLimit     Int
+  userLimit     Int
+  campaignLimit Int
+  features      Json                  @default("{}")
+  subscriptions CompanySubscription[]
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  deletedAt     DateTime?
+}
+
+model CompanySubscription {
+  id        String             @id @default(uuid()) @db.Uuid
+  companyId String             @db.Uuid
+  planId    String             @db.Uuid
+  status    SubscriptionStatus @default(ACTIVE)
+  startsAt  DateTime           @default(now())
+  endsAt    DateTime
+  company   Company            @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  plan      Plan               @relation(fields: [planId], references: [id])
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
   deletedAt DateTime?
+
+  @@index([companyId])
+  @@index([planId])
+  @@index([status])
+  @@index([startsAt, endsAt])
 }
 
 model Role {
@@ -325,4 +376,12 @@ enum LeadStatus {
   NOT_INTERESTED
   SOLD
   ARCHIVED
+}
+
+enum SubscriptionStatus {
+  TRIAL
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
 }

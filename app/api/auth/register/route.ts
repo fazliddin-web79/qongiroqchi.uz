@@ -8,6 +8,7 @@ import { hashPassword } from "@/lib/auth/password";
 import { ensurePermissions } from "@/lib/auth/roles";
 import { createTokenPair, setAuthCookies } from "@/lib/auth/tokens";
 import { recordAudit } from "@/lib/logging/audit-log";
+import { ensureDefaultCompanySetup } from "@/lib/billing/service";
 
 const schema = z.object({
   name: z.string().min(2).max(120),
@@ -30,6 +31,7 @@ export const POST = withApiHandler(async (request) => {
   const passwordHash = await hashPassword(input.password);
   const user = await prisma.$transaction(async (tx) => {
     const company = await tx.company.create({ data: { name: input.companyName, slug } });
+    await ensureDefaultCompanySetup(tx, company.id);
     const role = await tx.role.create({ data: { name: RoleName.ADMIN, companyId: company.id, permissions: { connect: permissions.map(({ id }) => ({ id })) } } });
     return tx.user.create({ data: { name: input.name, email: input.email, passwordHash, companyId: company.id, roles: { create: { roleId: role.id } } } });
   });

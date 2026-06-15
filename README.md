@@ -72,6 +72,7 @@ npm run db:studio
 
 The PostgreSQL schema includes the auth/RBAC foundation plus `Contact`,
 `ContactGroup`, `Campaign`, `Call`, `Lead`, and `LeadHistory` modules.
+It also includes company settings, billing plans, and subscription limits.
 
 ```bash
 npm run db:generate
@@ -113,6 +114,9 @@ lib/logging/          Audit and backend error persistence
 lib/permissions/      Role and permission helpers
 lib/queue/            BullMQ queue configuration and operations
 lib/telephony/        Replaceable telephony adapter and mock provider
+lib/billing/          Subscription usage and limit enforcement
+lib/settings/         Company calling policy helpers
+lib/telegram/         New-lead Telegram notifications
 messages/             Translation dictionaries
 prisma/               PostgreSQL schema, migrations, and seed
 types/                Shared TypeScript types
@@ -142,6 +146,18 @@ honors campaign retries, pause, and resume.
 The adapter contract lives in `lib/telephony/types.ts`. Implement that interface
 and update `lib/telephony/index.ts` to add Asterisk or a SIP provider without
 changing queue or campaign code.
+
+## Settings And Billing
+
+Company settings control Telegram lead notifications, default retries, working
+hours, call speed, locale, and timezone. Telegram tokens are stored in the
+database; use application-level encryption or a secrets manager before
+production deployment.
+
+Every company receives the `Free` plan by default. Active subscription call,
+user, and campaign limits are checked before starting campaigns or creating
+records. SUPER_ADMIN can manage plans and assign subscriptions from the Billing
+page.
 
 See [`docs/backend-api.md`](docs/backend-api.md) for the endpoint list, auth flow,
 role scope, and curl-based test instructions.

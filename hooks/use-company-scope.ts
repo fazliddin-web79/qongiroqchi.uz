@@ -8,6 +8,7 @@ export type CompanyOption = { id: string; name: string };
 export function useCompanyScope() {
   const [companies, setCompanies] = useState<CompanyOption[]>([]);
   const [companyId, setCompanyId] = useState("");
+  const [companiesLoading, setCompaniesLoading] = useState(true);
 
   useEffect(() => {
     void apiRequest<{ items: CompanyOption[] }>("/api/companies?limit=100").then(({ items }) => {
@@ -15,8 +16,8 @@ export function useCompanyScope() {
       setCompanyId((current) => current || items[0]?.id || "");
     }).catch(() => {
       // ADMIN users cannot list companies; their scope is derived by the API.
-    });
+    }).finally(() => setCompaniesLoading(false));
   }, []);
 
-  return { companies, companyId, setCompanyId };
+  return { companies, companyId, setCompanyId, companiesLoading };
 }

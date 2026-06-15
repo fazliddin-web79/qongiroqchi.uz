@@ -80,6 +80,19 @@
       "refresh": "Refresh", "status": "Queue status", "connected": "Connected", "workers": "Workers", "waiting": "Waiting", "running": "Running", "completed": "Completed", "failed": "Failed", "jobs": "Recent jobs", "autoRefresh": "Data refreshes automatically every 5 seconds.", "retry": "Retry", "empty": "No queue jobs yet.",
       "fields": { "campaign": "Campaign", "phone": "Phone", "state": "State", "attempts": "Attempts", "createdAt": "Created", "error": "Error" },
       "states": { "waiting": "Waiting", "active": "Running", "delayed": "Delayed", "completed": "Completed", "failed": "Failed" }
+    },
+    "settings": {
+      "saved": "Settings saved.", "test": "Send Telegram test", "testing": "Sending...", "testSent": "Telegram test message sent.",
+      "telegram": { "title": "Telegram notifications", "description": "Automatically notify the group when a new lead is created." },
+      "working": { "title": "Working hours", "description": "The call worker only runs during the configured hours." },
+      "calling": { "title": "Calling settings", "description": "Configure default retries, speed limit, and language." },
+      "fields": { "telegramBotToken": "Telegram bot token", "telegramChatId": "Telegram chat ID", "defaultRetryCount": "Default retry count", "workingEnabled": "Enable working hours restriction", "workingStart": "Start", "workingEnd": "End", "workingDays": "Weekdays (0-6)", "callSpeedLimit": "Calls per minute limit", "defaultLanguage": "Default language", "timezone": "Timezone" }
+    },
+    "billing": {
+      "plans": "Plans", "subscriptions": "Subscriptions", "createPlan": "Create plan", "editPlan": "Edit plan", "assignPlan": "Assign plan", "planCreated": "Plan created.", "planUpdated": "Plan updated.", "assigned": "Plan assigned to company.", "deleteConfirm": "Are you sure you want to delete this plan?",
+      "usage": { "calls": "Calls used", "users": "Active users", "campaigns": "Campaigns created" },
+      "fields": { "name": "Name", "price": "Monthly price", "callLimit": "Call limit", "userLimit": "User limit", "campaignLimit": "Campaign limit", "features": "Features (JSON)", "company": "Company", "plan": "Plan", "status": "Status", "period": "Period", "startsAt": "Starts at", "endsAt": "Ends at" },
+      "status": { "TRIAL": "Trial", "ACTIVE": "Active", "PAST_DUE": "Past due", "CANCELED": "Canceled", "EXPIRED": "Expired" }
     }
   }
 }

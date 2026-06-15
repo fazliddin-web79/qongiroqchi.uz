@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db/prisma";
 import { CALL_QUEUE_NAME, redisConnectionOptions } from "@/lib/queue/config";
 import type { CallJobData } from "@/lib/queue/call-queue";
 import { getTelephonyAdapter, type TelephonyCallResult, type TelephonyCallStatus } from "@/lib/telephony";
+import { getCompanySettings, parseWorkingHours } from "@/lib/settings/service";
 
 const worker = new Worker<CallJobData>(CALL_QUEUE_NAME, processCall, {
   connection: redisConnectionOptions(true),
@@ -27,6 +28,11 @@ async function processCall(job: Job<CallJobData>, token?: string) {
     include: { campaign: { select: { status: true, audioUrl: true } } },
   });
   if (!call) throw new Error(`Call ${job.data.callId} not found`);
+  const settings = await getCompanySettings(call.companyId);
+  if (!isWithinWorkingHours(settings.workingHours, settings.timezone)) {
+    await job.moveToDelayed(Date.now() + 15 * 60_000, token);
+    throw new DelayedError();
+  }
   if (call.campaign.status === CampaignStatus.PAUSED) {
     await job.moveToDelayed(Date.now() + 15_000, token);
     throw new DelayedError();
@@ -82,6 +88,19 @@ async function processCall(job: Job<CallJobData>, token?: string) {
 
   if (status !== CallStatus.ANSWERED) throw new Error(result.errorMessage ?? `Call finished with ${result.status}`);
   return { status, providerCallId: result.callId, pressedKey: result.pressedKey ?? null };
+}
+
+function isWithinWorkingHours(value: Parameters<typeof parseWorkingHours>[0], timezone: string) {
+  const workingHours = parseWorkingHours(value);
+  if (!workingHours.enabled) return true;
+  const parts = new Intl.DateTimeFormat("en-US", { timeZone: timezone, weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(new Date());
+  const weekday = parts.find(({ type }) => type === "weekday")?.value ?? "Sun";
+  const hour = parts.find(({ type }) => type === "hour")?.value ?? "00";
+  const minute = parts.find(({ type }) => type === "minute")?.value ?? "00";
+  const day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(weekday);
+  const time = `${hour}:${minute}`;
+  if (!workingHours.days.includes(day)) return false;
+  return workingHours.start <= workingHours.end ? time >= workingHours.start && time <= workingHours.end : time >= workingHours.start || time <= workingHours.end;
 }
 
 function hasAttemptsRemaining(job: Job<CallJobData>) {

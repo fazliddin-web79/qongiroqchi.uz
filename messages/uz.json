@@ -119,6 +119,19 @@
       "refresh": "Yangilash", "status": "Queue holati", "connected": "Ulangan", "workers": "Workerlar", "waiting": "Kutilmoqda", "running": "Ishlamoqda", "completed": "Yakunlangan", "failed": "Xatolik", "jobs": "So'nggi joblar", "autoRefresh": "Ma'lumotlar har 5 soniyada avtomatik yangilanadi.", "retry": "Qayta urinish", "empty": "Queue joblari hali yo'q.",
       "fields": { "campaign": "Kampaniya", "phone": "Telefon", "state": "Holat", "attempts": "Urinishlar", "createdAt": "Yaratilgan", "error": "Xatolik" },
       "states": { "waiting": "Kutilmoqda", "active": "Ishlamoqda", "delayed": "Kechiktirilgan", "completed": "Yakunlangan", "failed": "Xatolik" }
+    },
+    "settings": {
+      "saved": "Sozlamalar saqlandi.", "test": "Telegramga test yuborish", "testing": "Yuborilmoqda...", "testSent": "Telegram test xabari yuborildi.",
+      "telegram": { "title": "Telegram bildirishnomalari", "description": "Yangi lead yaratilganda guruhga avtomatik xabar yuboriladi." },
+      "working": { "title": "Ish vaqti", "description": "Qo'ng'iroq worker faqat belgilangan vaqt oralig'ida ishlaydi." },
+      "calling": { "title": "Qo'ng'iroq sozlamalari", "description": "Default retry, tezlik limiti va tilni sozlang." },
+      "fields": { "telegramBotToken": "Telegram bot token", "telegramChatId": "Telegram chat ID", "defaultRetryCount": "Default qayta urinishlar", "workingEnabled": "Ish vaqti cheklovini yoqish", "workingStart": "Boshlanish", "workingEnd": "Tugash", "workingDays": "Hafta kunlari (0-6)", "callSpeedLimit": "Daqiqadagi qo'ng'iroqlar limiti", "defaultLanguage": "Default til", "timezone": "Vaqt zonasi" }
+    },
+    "billing": {
+      "plans": "Tariflar", "subscriptions": "Obunalar", "createPlan": "Tarif yaratish", "editPlan": "Tarifni tahrirlash", "assignPlan": "Tarif biriktirish", "planCreated": "Tarif yaratildi.", "planUpdated": "Tarif yangilandi.", "assigned": "Tarif kompaniyaga biriktirildi.", "deleteConfirm": "Tarifni o'chirishni tasdiqlaysizmi?",
+      "usage": { "calls": "Ishlatilgan qo'ng'iroqlar", "users": "Faol foydalanuvchilar", "campaigns": "Yaratilgan kampaniyalar" },
+      "fields": { "name": "Nomi", "price": "Oylik narx", "callLimit": "Qo'ng'iroq limiti", "userLimit": "User limiti", "campaignLimit": "Kampaniya limiti", "features": "Imkoniyatlar (JSON)", "company": "Kompaniya", "plan": "Tarif", "status": "Status", "period": "Davr", "startsAt": "Boshlanish", "endsAt": "Tugash" },
+      "status": { "TRIAL": "Sinov", "ACTIVE": "Faol", "PAST_DUE": "To'lov kechikkan", "CANCELED": "Bekor qilingan", "EXPIRED": "Muddati tugagan" }
     }
   }
 }

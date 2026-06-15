@@ -9,6 +9,8 @@ import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyIdForWrite, companyWhereForRequest } from "@/lib/modules/scope";
 import { ROLES } from "@/lib/permissions/constants";
+import { assertCampaignLimit } from "@/lib/billing/service";
+import { getCompanySettings } from "@/lib/settings/service";
 
 export const GET = withApiHandler(async (request) => {
   const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
@@ -36,7 +38,9 @@ export const POST = withApiHandler(async (request) => {
   const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
   const input = createCampaignSchema.parse(await request.json());
   const companyId = companyIdForWrite(auth, input.companyId);
+  await assertCampaignLimit(companyId);
   if (!(await prisma.contactGroup.findFirst({ where: { id: input.contactGroupId, companyId, deletedAt: null } }))) throw new NotFoundError("Contact group");
+  const settings = await getCompanySettings(companyId);
   const startTime = parseStartTime(input.startTime);
   assertCampaignSchedule(input.status, startTime);
   const campaign = await prisma.campaign.create({
@@ -49,7 +53,7 @@ export const POST = withApiHandler(async (request) => {
       status: input.status,
       startTime,
       retryEnabled: input.retryEnabled,
-      retryCount: input.retryEnabled ? input.retryCount : 0,
+      retryCount: input.retryEnabled ? input.retryCount || settings.defaultRetryCount : 0,
       ivrSettings: input.ivrSettings as Prisma.InputJsonValue,
       createdById: auth.id,
     },

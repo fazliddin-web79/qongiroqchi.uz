@@ -63,6 +63,12 @@ object containing a stable `code`.
 | GET | `/api/queue/stats` | SUPER_ADMIN, ADMIN; BullMQ counts, workers, and recent jobs |
 | POST | `/api/queue/jobs/:id/retry` | SUPER_ADMIN, ADMIN; retries a failed call job |
 | GET | `/api/dashboard/stats` | SUPER_ADMIN, ADMIN, OPERATOR |
+| GET, PATCH | `/api/settings` | SUPER_ADMIN, ADMIN; company-scoped settings |
+| POST | `/api/settings/telegram/test` | SUPER_ADMIN, ADMIN |
+| GET, POST | `/api/billing/plans` | Read: SUPER_ADMIN, ADMIN; Create: SUPER_ADMIN |
+| PATCH, DELETE | `/api/billing/plans/:id` | SUPER_ADMIN |
+| GET, POST | `/api/billing/subscriptions` | Read: SUPER_ADMIN, ADMIN; Create: SUPER_ADMIN |
+| PATCH | `/api/billing/subscriptions/:id` | SUPER_ADMIN |
 
 List endpoints that return paginated data accept `?page=1&limit=20`.
 Contact and campaign lists also accept `search`, `status`, and group filters.
@@ -88,6 +94,10 @@ SUPER_ADMIN can pass `companyId` to scope lists and create records.
   it to the least-busy company operator.
 - Operators only receive their assigned leads and may update status, note, and
   callback time. Every lead change is persisted in `LeadHistory`.
+- New leads send a best-effort Telegram group notification when the company bot
+  token and chat id are configured.
+- Active subscription limits block campaign starts that exceed call allowance
+  and block creation beyond user and campaign limits.
 
 ## Authentication Flow
 

@@ -80,6 +80,19 @@
       "refresh": "Обновить", "status": "Статус очереди", "connected": "Подключено", "workers": "Воркеры", "waiting": "Ожидают", "running": "Выполняются", "completed": "Завершены", "failed": "Ошибки", "jobs": "Последние задания", "autoRefresh": "Данные обновляются автоматически каждые 5 секунд.", "retry": "Повторить", "empty": "Заданий в очереди пока нет.",
       "fields": { "campaign": "Кампания", "phone": "Телефон", "state": "Состояние", "attempts": "Попытки", "createdAt": "Создано", "error": "Ошибка" },
       "states": { "waiting": "Ожидает", "active": "Выполняется", "delayed": "Отложено", "completed": "Завершено", "failed": "Ошибка" }
+    },
+    "settings": {
+      "saved": "Настройки сохранены.", "test": "Отправить тест в Telegram", "testing": "Отправка...", "testSent": "Тестовое сообщение Telegram отправлено.",
+      "telegram": { "title": "Уведомления Telegram", "description": "Автоматически отправлять сообщение в группу при создании нового лида." },
+      "working": { "title": "Рабочее время", "description": "Воркер звонков работает только в указанное время." },
+      "calling": { "title": "Настройки звонков", "description": "Настройте повторы, ограничение скорости и язык." },
+      "fields": { "telegramBotToken": "Токен Telegram-бота", "telegramChatId": "Telegram chat ID", "defaultRetryCount": "Повторы по умолчанию", "workingEnabled": "Включить ограничение рабочего времени", "workingStart": "Начало", "workingEnd": "Конец", "workingDays": "Дни недели (0-6)", "callSpeedLimit": "Лимит звонков в минуту", "defaultLanguage": "Язык по умолчанию", "timezone": "Часовой пояс" }
+    },
+    "billing": {
+      "plans": "Тарифы", "subscriptions": "Подписки", "createPlan": "Создать тариф", "editPlan": "Изменить тариф", "assignPlan": "Назначить тариф", "planCreated": "Тариф создан.", "planUpdated": "Тариф обновлён.", "assigned": "Тариф назначен компании.", "deleteConfirm": "Удалить этот тариф?",
+      "usage": { "calls": "Использовано звонков", "users": "Активные пользователи", "campaigns": "Создано кампаний" },
+      "fields": { "name": "Название", "price": "Цена в месяц", "callLimit": "Лимит звонков", "userLimit": "Лимит пользователей", "campaignLimit": "Лимит кампаний", "features": "Возможности (JSON)", "company": "Компания", "plan": "Тариф", "status": "Статус", "period": "Период", "startsAt": "Начало", "endsAt": "Окончание" },
+      "status": { "TRIAL": "Пробный", "ACTIVE": "Активна", "PAST_DUE": "Просрочена", "CANCELED": "Отменена", "EXPIRED": "Истекла" }
     }
   }
 }

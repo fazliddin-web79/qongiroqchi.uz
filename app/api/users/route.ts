@@ -8,7 +8,8 @@ import { requireApiAuth } from "@/lib/auth/api";
 import { hashPassword } from "@/lib/auth/password";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
-import { companyWhere, isSuperAdmin } from "@/lib/permissions";
+import { isSuperAdmin } from "@/lib/permissions";
+import { companyWhereForRequest } from "@/lib/modules/scope";
 import { ROLES } from "@/lib/permissions/constants";
 
 const createSchema = z.object({
@@ -22,7 +23,7 @@ const createSchema = z.object({
 export const GET = withApiHandler(async (request) => {
   const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
   const { page, limit, skip } = paginationFrom(request);
-  const where = { deletedAt: null, ...companyWhere(auth) };
+  const where = { deletedAt: null, ...companyWhereForRequest(auth, request.nextUrl.searchParams.get("companyId")) };
   const [items, total] = await prisma.$transaction([
     prisma.user.findMany({ where, skip, take: limit, orderBy: { createdAt: "desc" }, select: { id: true, name: true, email: true, companyId: true, createdAt: true, roles: { where: { deletedAt: null }, select: { role: { select: { id: true, name: true } } } } } }),
     prisma.user.count({ where }),

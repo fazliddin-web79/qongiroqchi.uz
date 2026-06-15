@@ -20,6 +20,7 @@ model User {
   refreshTokens RefreshToken[]
   assignedLeads Lead[]         @relation("AssignedLeads")
   campaigns     Campaign[]     @relation("CampaignCreator")
+  leadHistory   LeadHistory[]
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   deletedAt     DateTime?
@@ -39,6 +40,7 @@ model Company {
   contacts  Contact[]
   groups    ContactGroup[]
   campaigns Campaign[]
+  calls     Call[]
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
   deletedAt DateTime?
@@ -140,21 +142,51 @@ model RefreshToken {
 }
 
 model Lead {
-  id           String    @id @default(uuid()) @db.Uuid
-  name         String
-  phone        String
-  email        String?
-  status       String    @default("NEW")
-  companyId    String    @db.Uuid
-  assignedToId String?   @db.Uuid
-  company      Company   @relation(fields: [companyId], references: [id])
-  assignedTo   User?     @relation("AssignedLeads", fields: [assignedToId], references: [id])
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+  id           String        @id @default(uuid()) @db.Uuid
+  companyId    String        @db.Uuid
+  campaignId   String?       @db.Uuid
+  contactId    String?       @db.Uuid
+  callId       String?       @unique @db.Uuid
+  source       String        @default("MANUAL")
+  status       LeadStatus    @default(NEW)
+  assignedToId String?       @db.Uuid
+  note         String?
+  callbackAt   DateTime?
+  company      Company       @relation(fields: [companyId], references: [id])
+  campaign     Campaign?     @relation(fields: [campaignId], references: [id])
+  contact      Contact?      @relation(fields: [contactId], references: [id])
+  call         Call?         @relation(fields: [callId], references: [id])
+  assignedTo   User?         @relation("AssignedLeads", fields: [assignedToId], references: [id])
+  history      LeadHistory[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   deletedAt    DateTime?
 
   @@index([companyId])
+  @@index([campaignId])
+  @@index([contactId])
   @@index([assignedToId])
+  @@index([status])
+  @@index([callbackAt])
+}
+
+model LeadHistory {
+  id         String      @id @default(uuid()) @db.Uuid
+  leadId     String      @db.Uuid
+  userId     String?     @db.Uuid
+  action     String
+  fromStatus LeadStatus?
+  toStatus   LeadStatus?
+  note       String?
+  metadata   Json?
+  lead       Lead        @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  user       User?       @relation(fields: [userId], references: [id])
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  deletedAt  DateTime?
+
+  @@index([leadId])
+  @@index([userId])
 }
 
 model Contact {
@@ -167,6 +199,8 @@ model Contact {
   status      ContactStatus @default(ACTIVE)
   company     Company       @relation(fields: [companyId], references: [id])
   group       ContactGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+  calls       Call[]
+  leads       Lead[]
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
   deletedAt   DateTime?
@@ -209,6 +243,8 @@ model Campaign {
   company        Company        @relation(fields: [companyId], references: [id])
   contactGroup   ContactGroup   @relation(fields: [contactGroupId], references: [id])
   createdBy      User           @relation("CampaignCreator", fields: [createdById], references: [id])
+  calls          Call[]
+  leads          Lead[]
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   deletedAt      DateTime?
@@ -218,6 +254,35 @@ model Campaign {
   @@index([createdById])
   @@index([status])
   @@index([startTime])
+}
+
+model Call {
+  id           String     @id @default(uuid()) @db.Uuid
+  companyId    String     @db.Uuid
+  campaignId   String     @db.Uuid
+  contactId    String     @db.Uuid
+  phone        String
+  status       CallStatus @default(PENDING)
+  duration     Int?
+  pressedKey   String?
+  recordingUrl String?
+  errorMessage String?
+  attemptCount Int        @default(0)
+  startedAt    DateTime?
+  endedAt      DateTime?
+  company      Company    @relation(fields: [companyId], references: [id])
+  campaign     Campaign   @relation(fields: [campaignId], references: [id])
+  contact      Contact    @relation(fields: [contactId], references: [id])
+  lead         Lead?
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@unique([campaignId, contactId])
+  @@index([companyId])
+  @@index([campaignId])
+  @@index([contactId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 enum RoleName {
@@ -239,4 +304,23 @@ enum CampaignStatus {
   PAUSED
   COMPLETED
   FAILED
+}
+
+enum CallStatus {
+  PENDING
+  CALLING
+  ANSWERED
+  NOT_ANSWERED
+  BUSY
+  FAILED
+  COMPLETED
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  INTERESTED
+  NOT_INTERESTED
+  SOLD
+  ARCHIVED
 }

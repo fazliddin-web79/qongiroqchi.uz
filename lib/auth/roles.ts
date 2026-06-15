@@ -8,7 +8,7 @@ export async function ensurePermissions() {
 
 export async function ensureRole(name: RoleName, companyId: string | null) {
   const permissions = await ensurePermissions();
-  const allowed = name === RoleName.OPERATOR ? permissions.filter(({ key }) => ["leads.read", "leads.update"].includes(key)) : permissions;
+  const allowed = name === RoleName.OPERATOR ? permissions.filter(({ key }) => ["leads.read", "leads.update", "leadHistory.read", "dashboard.read"].includes(key)) : permissions;
   const existing = await prisma.role.findFirst({ where: { name, companyId } });
   if (existing) return prisma.role.update({ where: { id: existing.id }, data: { deletedAt: null, permissions: { set: allowed.map(({ id }) => ({ id })) } } });
   return prisma.role.create({ data: { name, companyId, permissions: { connect: allowed.map(({ id }) => ({ id })) } } });

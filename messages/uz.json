@@ -48,7 +48,7 @@
   },
   "nav": {
     "dashboard": "Dashboard", "companies": "Kompaniyalar", "users": "Foydalanuvchilar", "campaigns": "Kampaniyalar",
-    "contacts": "Kontaktlar", "calls": "Qo'ng'iroqlar", "leads": "Leadlar", "errors": "Xatoliklar",
+    "contacts": "Kontaktlar", "calls": "Qo'ng'iroqlar", "leads": "Leadlar", "operator": "Operator paneli", "errors": "Xatoliklar",
     "auditLogs": "Audit loglar", "settings": "Sozlamalar", "billing": "Billing"
   },
   "sidebar": { "helpTitle": "Yordam kerakmi?", "helpDescription": "Qo'llab-quvvatlash jamoasi bilan bog'laning." },
@@ -63,15 +63,19 @@
     "contacts": { "title": "Kontaktlar", "description": "Mijozlar va kontakt ro'yxatlarini boshqaring.", "emptyTitle": "Kontaktlar hali yo'q", "emptyDescription": "Kontaktlarni qo'shing yoki fayldan import qiling.", "action": "Kontakt qo'shish" },
     "calls": { "title": "Qo'ng'iroqlar", "description": "Barcha qo'ng'iroqlar tarixi va holatini ko'ring.", "emptyTitle": "Qo'ng'iroqlar hali yo'q", "emptyDescription": "Kampaniya boshlanganda qo'ng'iroqlar shu yerda ko'rinadi.", "action": "Kampaniya yaratish" },
     "leads": { "title": "Leadlar", "description": "Qiziqish bildirgan mijozlarni boshqaring.", "emptyTitle": "Leadlar hali yo'q", "emptyDescription": "Yangi leadlar aniqlanganda shu yerda ko'rinadi.", "action": "Lead qo'shish" },
+    "operator": { "title": "Operator paneli", "description": "Sizga biriktirilgan leadlar va callbacklarni boshqaring.", "emptyTitle": "Biriktirilgan leadlar yo'q", "emptyDescription": "Sizga lead biriktirilganda shu yerda ko'rinadi." },
     "errors": { "title": "Xatolik loglari", "description": "Tizim xatoliklarini kuzating va hal qiling.", "emptyTitle": "Xatoliklar topilmadi", "emptyDescription": "Tizim yaxshi ishlamoqda. Yangi xatoliklar shu yerda ko'rinadi.", "action": "Yangilash" },
     "auditLogs": { "title": "Audit loglar", "description": "Muhim foydalanuvchi va tizim amallarini kuzating.", "emptyTitle": "Audit yozuvlari hali yo'q", "emptyDescription": "Muhim amallar bajarilganda shu yerda yoziladi.", "action": "Eksport qilish" },
     "settings": { "title": "Sozlamalar", "description": "Platforma va kompaniya sozlamalarini boshqaring.", "emptyTitle": "Sozlamalar bo'limi tayyorlanmoqda", "emptyDescription": "Kompaniya va integratsiya sozlamalari keyingi bosqichda qo'shiladi.", "action": "Saqlash" },
     "billing": { "title": "Billing", "description": "Tarif, hisob va to'lovlarni boshqaring.", "emptyTitle": "Billing ma'lumotlari hali yo'q", "emptyDescription": "Tarif va to'lov integratsiyasi keyingi bosqichda qo'shiladi.", "action": "Tarifni tanlash" }
   },
   "dashboard": {
-    "stats": { "companies": "Kompaniyalar", "campaigns": "Faol kampaniyalar", "calls": "Jami qo'ng'iroqlar", "leads": "Yangi leadlar" },
+    "stats": { "companies": "Kompaniyalar", "campaigns": "Faol kampaniyalar", "calls": "Jami qo'ng'iroqlar", "totalCalls": "Jami qo'ng'iroqlar", "answeredCalls": "Javob berilgan", "failedCalls": "Xatolik bilan", "leads": "Leadlar", "conversionRate": "Konversiya", "conversion": "lead / javob" },
     "recent": { "title": "So'nggi kampaniyalar", "description": "Joriy kampaniyalarning qisqa holati." },
     "table": { "campaign": "Kampaniya", "company": "Kompaniya", "calls": "Qo'ng'iroqlar", "status": "Holat" },
+    "campaignStats": { "title": "Kampaniya statistikasi", "description": "Kampaniyalar bo'yicha qo'ng'iroq va lead natijalari." },
+    "operatorStats": { "title": "Operator statistikasi", "description": "Operatorlar bo'yicha lead natijalari.", "operator": "Operator", "total": "Jami", "interested": "Qiziqqan", "sold": "Sotilgan" },
+    "noStats": "Statistika hali mavjud emas.",
     "rows": {
       "summer": { "campaign": "Yozgi taklif", "company": "Acme Group", "calls": "3,840" },
       "welcome": { "campaign": "Yangi mijozlar", "company": "Nova Tech", "calls": "1,920" },
@@ -93,11 +97,22 @@
       "status": { "ACTIVE": "Faol", "BLOCKED": "Bloklangan", "UNSUBSCRIBED": "Obunadan chiqqan" }
     },
     "campaigns": {
-      "search": "Kampaniya nomi bo'yicha qidirish...", "created": "Kampaniya yaratildi.", "updated": "Kampaniya yangilandi.", "deleted": "Kampaniya o'chirildi.",
+      "search": "Kampaniya nomi bo'yicha qidirish...", "created": "Kampaniya yaratildi.", "updated": "Kampaniya yangilandi.", "deleted": "Kampaniya o'chirildi.", "start": "Kampaniyani boshlash", "started": "Yaratilgan qo'ng'iroqlar",
       "deleteConfirm": "Kampaniyani o'chirishni tasdiqlaysizmi?", "createTitle": "Kampaniya yaratish", "editTitle": "Kampaniyani tahrirlash", "notScheduled": "Rejalashtirilmagan",
       "selectGroup": "Kontakt guruhini tanlang", "chooseAudio": "Audio fayl tanlang (MP3, WAV, OGG, M4A)",
       "fields": { "name": "Nomi", "description": "Tavsif", "group": "Kontakt guruhi", "status": "Status", "startTime": "Boshlanish vaqti", "createdBy": "Yaratuvchi", "audio": "Audio fayl", "retryEnabled": "Qayta urinish yoqilsin", "retryCount": "Qayta urinishlar soni", "ivrSettings": "IVR sozlamalari (JSON)" },
       "status": { "DRAFT": "Qoralama", "SCHEDULED": "Rejalashtirilgan", "RUNNING": "Ishlamoqda", "PAUSED": "To'xtatilgan", "COMPLETED": "Yakunlangan", "FAILED": "Xatolik" }
+    },
+    "calls": {
+      "search": "Kontakt yoki telefon bo'yicha qidirish...", "allCampaigns": "Barcha kampaniyalar", "updateTitle": "Qo'ng'iroq natijasini yangilash", "createLead": "Bu qo'ng'iroqdan lead yaratish", "leadCreated": "Lead yaratildi", "seconds": "soniya",
+      "fields": { "contact": "Kontakt", "campaign": "Kampaniya", "phone": "Telefon", "status": "Status", "duration": "Davomiyligi", "pressedKey": "Bosilgan tugma", "errorMessage": "Xatolik matni", "lead": "Lead" },
+      "status": { "PENDING": "Kutilmoqda", "CALLING": "Qo'ng'iroq qilinmoqda", "ANSWERED": "Javob berdi", "NOT_ANSWERED": "Javob bermadi", "BUSY": "Band", "FAILED": "Xatolik", "COMPLETED": "Yakunlandi" }
+    },
+    "leads": {
+      "search": "Kontakt, telefon yoki izoh bo'yicha qidirish...", "allOperators": "Barcha operatorlar", "unassigned": "Biriktirilmagan", "updateTitle": "Leadni yangilash", "history": "Lead tarixi", "noHistory": "Tarix yozuvlari yo'q", "system": "Tizim",
+      "fields": { "contact": "Kontakt", "campaign": "Kampaniya", "source": "Manba", "status": "Status", "operator": "Operator", "callbackAt": "Callback vaqti", "note": "Izoh" },
+      "status": { "NEW": "Yangi", "CONTACTED": "Bog'lanildi", "INTERESTED": "Qiziqdi", "NOT_INTERESTED": "Qiziqmadi", "SOLD": "Sotildi", "ARCHIVED": "Arxivlandi" },
+      "actions": { "LEAD_CREATE": "Lead yaratildi", "LEAD_RESTORE": "Lead qayta tiklandi", "LEAD_ASSIGN": "Operator biriktirildi", "STATUS_CHANGE": "Status o'zgardi", "CALLBACK_SET": "Callback belgilandi", "NOTE_ADD": "Izoh qo'shildi", "LEAD_UPDATE": "Lead yangilandi", "LEAD_DELETE": "Lead o'chirildi" }
     }
   }
 }

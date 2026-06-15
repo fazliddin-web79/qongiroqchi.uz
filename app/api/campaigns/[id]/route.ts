@@ -1,9 +1,10 @@
-import { Prisma } from "@prisma/client";
+import { CampaignStatus, Prisma } from "@prisma/client";
 import { NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
 import { requireApiAuth } from "@/lib/auth/api";
 import { assertCampaignSchedule, parseStartTime, updateCampaignSchema } from "@/lib/campaigns/validation";
+import { launchCampaign } from "@/lib/calls/pipeline";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyWhere } from "@/lib/permissions";
@@ -43,6 +44,7 @@ export const PATCH = withApiHandler<Context>(async (request, { params }) => {
     },
     include: { contactGroup: { select: { id: true, name: true } }, createdBy: { select: { id: true, name: true } } },
   });
+  if (input.status === CampaignStatus.RUNNING && existing.status !== CampaignStatus.RUNNING) await launchCampaign(id);
   await recordAudit({ action: "CAMPAIGN_UPDATE", entity: "Campaign", entityId: id, user: auth, request });
   return apiSuccess(campaign, "Campaign updated");
 });

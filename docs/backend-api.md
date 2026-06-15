@@ -45,6 +45,7 @@ object containing a stable `code`.
 | GET | `/api/leads` | SUPER_ADMIN, ADMIN, OPERATOR |
 | POST | `/api/leads` | SUPER_ADMIN, ADMIN |
 | GET, PATCH | `/api/leads/:id` | SUPER_ADMIN, ADMIN, assigned OPERATOR |
+| GET | `/api/leads/:id/history` | SUPER_ADMIN, ADMIN, assigned OPERATOR |
 | DELETE | `/api/leads/:id` | SUPER_ADMIN, ADMIN |
 | GET, POST | `/api/contact-groups` | SUPER_ADMIN, ADMIN |
 | GET, PATCH, DELETE | `/api/contact-groups/:id` | SUPER_ADMIN, ADMIN |
@@ -54,6 +55,10 @@ object containing a stable `code`.
 | GET, POST | `/api/campaigns` | SUPER_ADMIN, ADMIN |
 | GET, PATCH, DELETE | `/api/campaigns/:id` | SUPER_ADMIN, ADMIN |
 | POST | `/api/campaigns/upload-audio` | SUPER_ADMIN, ADMIN; MP3/WAV/OGG/M4A up to 25 MB |
+| POST | `/api/campaigns/:id/start` | SUPER_ADMIN, ADMIN; creates contact-based call queue |
+| GET | `/api/calls` | SUPER_ADMIN, ADMIN |
+| GET, PATCH | `/api/calls/:id` | SUPER_ADMIN, ADMIN; records call result and can create lead |
+| GET | `/api/dashboard/stats` | SUPER_ADMIN, ADMIN, OPERATOR |
 
 List endpoints that return paginated data accept `?page=1&limit=20`.
 Contact and campaign lists also accept `search`, `status`, and group filters.
@@ -70,6 +75,12 @@ SUPER_ADMIN can pass `companyId` to scope lists and create records.
   inside each company.
 - Campaign audio currently uses the local `public/uploads/audio` adapter. Replace
   it with object storage before horizontally scaling the application.
+- Starting a campaign creates one idempotent `Call` record for every active
+  contact in its selected group.
+- A pressed IVR key or `createLead: true` call result creates a lead and assigns
+  it to the least-busy company operator.
+- Operators only receive their assigned leads and may update status, note, and
+  callback time. Every lead change is persisted in `LeadHistory`.
 
 ## Authentication Flow
 

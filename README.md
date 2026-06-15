@@ -57,8 +57,7 @@ npm run db:studio
 ## Prisma And Migrations
 
 The PostgreSQL schema includes the auth/RBAC foundation plus `Contact`,
-`ContactGroup`, `Campaign`, and `Lead` modules. Every model includes UUID IDs
-and timestamp/soft-delete fields.
+`ContactGroup`, `Campaign`, `Call`, `Lead`, and `LeadHistory` modules.
 
 ```bash
 npm run db:generate
@@ -109,7 +108,8 @@ types/                Shared TypeScript types
 - `lib/auth` provides password hashing, JWT signing, refresh rotation, and API
   authentication.
 - `app/api` contains Auth, Users, Companies, Roles, Permissions, Leads,
-  Contacts, Campaigns, AuditLogs, and ErrorLogs endpoints.
+  Contacts, Campaigns, Calls, Dashboard statistics, AuditLogs, and ErrorLogs
+  endpoints.
 - `lib/api/handler.ts` normalizes API errors and records them in `ErrorLog`.
 - `lib/permissions` enforces global SUPER_ADMIN, company-scoped ADMIN, and
   assigned-lead-only OPERATOR access.

@@ -19,16 +19,20 @@ npm install
 cp .env.example .env
 ```
 
-Update `.env` with your PostgreSQL connection and a secure auth secret:
+Update `.env` with your PostgreSQL connection and secure auth secrets:
 
 ```env
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/autocall_crm?schema=public"
 AUTH_SECRET="replace-with-a-long-random-secret"
-AUTH_ENFORCED="false"
+REFRESH_TOKEN_SECRET="replace-with-another-long-random-secret"
+AUTH_ENFORCED="true"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
+SUPER_ADMIN_EMAIL="superadmin@autocall.local"
+SUPER_ADMIN_PASSWORD="ChangeMe123!"
 ```
 
-`AUTH_ENFORCED=false` keeps the dashboard in demo mode. Set it to `true` after implementing the real login flow.
+`AUTH_ENFORCED=false` keeps the dashboard in demo mode. Use `true` when testing
+the JWT-backed login flow.
 
 ## Development
 
@@ -45,17 +49,24 @@ npm run typecheck
 npm run build
 npm run start
 npm run db:generate
+npm run db:deploy
+npm run db:seed
 npm run db:studio
 ```
 
 ## Prisma And Migrations
 
-The initial PostgreSQL schema includes `User`, `Company`, `Role`, `Permission`, `UserRole`, `AuditLog`, and `ErrorLog`. Every model includes UUID IDs and timestamp/soft-delete fields.
+The initial PostgreSQL schema includes `User`, `Company`, `Role`, `Permission`,
+`UserRole`, `AuditLog`, `ErrorLog`, `RefreshToken`, and `Lead`. Every model
+includes UUID IDs and timestamp/soft-delete fields.
 
 ```bash
 npm run db:generate
 npm run db:migrate -- --name init
+npm run db:seed
 ```
+
+Use `npm run db:deploy` to apply committed migrations outside development.
 
 ## Internationalization
 
@@ -82,20 +93,27 @@ components/ui/        Reusable design-system primitives
 config/               Application-level configuration
 hooks/                Shared React hooks
 lib/auth/             JWT and auth service foundation
+lib/api/              Shared API response, error, and pagination helpers
 lib/db/               Prisma client
 lib/i18n/             Locale configuration and server dictionary loading
+lib/logging/          Audit and backend error persistence
 lib/permissions/      Role and permission helpers
 messages/             Translation dictionaries
-prisma/               PostgreSQL schema
+prisma/               PostgreSQL schema, migrations, and seed
 types/                Shared TypeScript types
 ```
 
-## Authentication Foundation
+## Backend And Authentication
 
 - `auth.config.ts` defines protected routes and cookie settings.
-- `lib/auth/jwt.ts` provides JWT signing and verification.
-- `lib/auth/service.ts` provides session lookup and `requireAuth()`.
-- `middleware.ts` prepares dashboard route protection.
-- `lib/permissions` provides role and permission helpers.
+- `lib/auth` provides password hashing, JWT signing, refresh rotation, and API
+  authentication.
+- `app/api` contains Auth, Users, Companies, Roles, Permissions, Leads,
+  AuditLogs, and ErrorLogs endpoints.
+- `lib/api/handler.ts` normalizes API errors and records them in `ErrorLog`.
+- `lib/permissions` enforces global SUPER_ADMIN, company-scoped ADMIN, and
+  assigned-lead-only OPERATOR access.
+- `middleware.ts` protects dashboard pages when `AUTH_ENFORCED=true`.
 
-The actual credential validation, password reset flow, and session persistence should be implemented next.
+See [`docs/backend-api.md`](docs/backend-api.md) for the endpoint list, auth flow,
+role scope, and curl-based test instructions.

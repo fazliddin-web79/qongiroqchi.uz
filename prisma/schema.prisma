@@ -8,18 +8,20 @@ datasource db {
 }
 
 model User {
-  id           String     @id @default(uuid()) @db.Uuid
-  email        String     @unique
-  name         String
-  passwordHash String?
-  companyId    String?    @db.Uuid
-  company      Company?   @relation(fields: [companyId], references: [id])
-  roles        UserRole[]
-  auditLogs    AuditLog[]
-  errorLogs    ErrorLog[]
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  deletedAt    DateTime?
+  id            String         @id @default(uuid()) @db.Uuid
+  email         String         @unique
+  name          String
+  passwordHash  String?
+  companyId     String?        @db.Uuid
+  company       Company?       @relation(fields: [companyId], references: [id])
+  roles         UserRole[]
+  auditLogs     AuditLog[]
+  errorLogs     ErrorLog[]
+  refreshTokens RefreshToken[]
+  assignedLeads Lead[]         @relation("AssignedLeads")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
 
   @@index([companyId])
 }
@@ -32,6 +34,7 @@ model Company {
   roles     Role[]
   auditLogs AuditLog[]
   errorLogs ErrorLog[]
+  leads     Lead[]
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
   deletedAt DateTime?
@@ -39,7 +42,7 @@ model Company {
 
 model Role {
   id          String       @id @default(uuid()) @db.Uuid
-  name        String
+  name        RoleName
   description String?
   companyId   String?      @db.Uuid
   company     Company?     @relation(fields: [companyId], references: [id])
@@ -83,6 +86,8 @@ model AuditLog {
   entity    String
   entityId  String?
   metadata  Json?
+  ipAddress String?
+  userAgent String?
   userId    String?   @db.Uuid
   companyId String?   @db.Uuid
   user      User?     @relation(fields: [userId], references: [id])
@@ -100,6 +105,9 @@ model ErrorLog {
   message    String
   stack      String?
   context    Json?
+  route      String?
+  method     String?
+  statusCode Int?
   resolvedAt DateTime?
   userId     String?   @db.Uuid
   companyId  String?   @db.Uuid
@@ -111,4 +119,42 @@ model ErrorLog {
 
   @@index([userId])
   @@index([companyId])
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  tokenHash String    @unique
+  userId    String    @db.Uuid
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@index([userId])
+}
+
+model Lead {
+  id           String    @id @default(uuid()) @db.Uuid
+  name         String
+  phone        String
+  email        String?
+  status       String    @default("NEW")
+  companyId    String    @db.Uuid
+  assignedToId String?   @db.Uuid
+  company      Company   @relation(fields: [companyId], references: [id])
+  assignedTo   User?     @relation("AssignedLeads", fields: [assignedToId], references: [id])
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  @@index([companyId])
+  @@index([assignedToId])
+}
+
+enum RoleName {
+  SUPER_ADMIN
+  ADMIN
+  OPERATOR
 }

@@ -39,6 +39,20 @@ object containing a stable `code`.
 | GET, PATCH, DELETE | `/api/roles/:id` | SUPER_ADMIN, ADMIN |
 | GET, POST | `/api/permissions` | SUPER_ADMIN |
 | GET, PATCH, DELETE | `/api/permissions/:id` | SUPER_ADMIN |
+
+### Action permissions
+
+Protected module endpoints use action-level permissions:
+
+- Campaign: `campaign.create`, `campaign.read`, `campaign.update`, `campaign.delete`, `campaign.start`, `campaign.pause`
+- Contact: `contact.create`, `contact.import`, `contact.read`, `contact.update`, `contact.delete`, `contact.export`
+- Lead: `lead.read`, `lead.assign`, `lead.update_status`, `lead.add_note`, `lead.export`
+- User: `user.create`, `user.invite`, `user.update`, `user.delete`
+- Platform: `billing.read`, `billing.update`, `error.read`, `audit.read`, `settings.update`
+
+`ADMIN` receives the full action catalog by default. `OPERATOR` receives
+`lead.read`, `lead.update_status`, and `lead.add_note`. `SUPER_ADMIN` receives
+the full catalog and keeps global scope.
 | GET | `/api/audit-logs` | SUPER_ADMIN, ADMIN |
 | GET | `/api/error-logs` | SUPER_ADMIN, ADMIN |
 | PATCH | `/api/error-logs/:id` | SUPER_ADMIN, ADMIN |

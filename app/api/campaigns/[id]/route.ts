@@ -2,18 +2,18 @@ import { CampaignStatus, Prisma } from "@prisma/client";
 import { NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { assertCampaignSchedule, parseStartTime, updateCampaignSchema } from "@/lib/campaigns/validation";
 import { launchCampaign } from "@/lib/calls/pipeline";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyWhere } from "@/lib/permissions";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 type Context = { params: Promise<{ id: string }> };
 
 export const GET = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CAMPAIGN_READ);
   const { id } = await params;
   const campaign = await prisma.campaign.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) }, include: { contactGroup: { select: { id: true, name: true, _count: { select: { contacts: { where: { deletedAt: null } } } } } }, createdBy: { select: { id: true, name: true } }, company: { select: { id: true, name: true } } } });
   if (!campaign) throw new NotFoundError("Campaign");
@@ -21,7 +21,7 @@ export const GET = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const PATCH = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CAMPAIGN_UPDATE);
   const { id } = await params;
   const input = updateCampaignSchema.parse(await request.json());
   const existing = await prisma.campaign.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) } });
@@ -50,7 +50,7 @@ export const PATCH = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const DELETE = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CAMPAIGN_DELETE);
   const { id } = await params;
   if (!(await prisma.campaign.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) } }))) throw new NotFoundError("Campaign");
   await prisma.campaign.update({ where: { id }, data: { deletedAt: new Date() } });

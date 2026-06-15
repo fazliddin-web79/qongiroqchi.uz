@@ -2,11 +2,11 @@ import { Prisma } from "@prisma/client";
 import { z } from "zod";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyIdForWrite } from "@/lib/modules/scope";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 import { getCompanySettings } from "@/lib/settings/service";
 
 const workingHoursSchema = z.object({
@@ -29,13 +29,13 @@ const schema = z.object({
 });
 
 export const GET = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.SETTINGS_UPDATE);
   const companyId = companyIdForWrite(auth, request.nextUrl.searchParams.get("companyId"));
   return apiSuccess(await getCompanySettings(companyId));
 });
 
 export const PATCH = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.SETTINGS_UPDATE);
   const input = schema.parse(await request.json());
   const companyId = companyIdForWrite(auth, input.companyId);
   await getCompanySettings(companyId);

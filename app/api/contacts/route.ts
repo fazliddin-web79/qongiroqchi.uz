@@ -4,12 +4,12 @@ import { ConflictError, NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { paginationFrom, paginationMeta } from "@/lib/api/query";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { normalizePhone } from "@/lib/contacts/phone";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyIdForWrite, companyWhereForRequest } from "@/lib/modules/scope";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 const schema = z.object({
   fullName: z.string().trim().min(2).max(160),
@@ -21,7 +21,7 @@ const schema = z.object({
 });
 
 export const GET = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CONTACT_READ);
   const { page, limit, skip } = paginationFrom(request);
   const search = request.nextUrl.searchParams.get("search")?.trim();
   const groupId = request.nextUrl.searchParams.get("groupId");
@@ -43,7 +43,7 @@ export const GET = withApiHandler(async (request) => {
 });
 
 export const POST = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CONTACT_CREATE);
   const input = schema.parse(await request.json());
   const companyId = companyIdForWrite(auth, input.companyId);
   const phone = normalizePhone(input.phone);

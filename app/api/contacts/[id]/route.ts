@@ -3,12 +3,12 @@ import { z } from "zod";
 import { ConflictError, NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { normalizePhone } from "@/lib/contacts/phone";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyWhere } from "@/lib/permissions";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 type Context = { params: Promise<{ id: string }> };
 const schema = z.object({
@@ -20,7 +20,7 @@ const schema = z.object({
 });
 
 export const GET = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CONTACT_READ);
   const { id } = await params;
   const contact = await prisma.contact.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) }, include: { group: { select: { id: true, name: true } }, company: { select: { id: true, name: true } } } });
   if (!contact) throw new NotFoundError("Contact");
@@ -28,7 +28,7 @@ export const GET = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const PATCH = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CONTACT_UPDATE);
   const { id } = await params;
   const input = schema.parse(await request.json());
   const existing = await prisma.contact.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) } });
@@ -42,7 +42,7 @@ export const PATCH = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const DELETE = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CONTACT_DELETE);
   const { id } = await params;
   if (!(await prisma.contact.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) } }))) throw new NotFoundError("Contact");
   await prisma.contact.update({ where: { id }, data: { deletedAt: new Date() } });

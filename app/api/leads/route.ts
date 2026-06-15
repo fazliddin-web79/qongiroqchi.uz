@@ -4,12 +4,12 @@ import { ConflictError, NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { paginationFrom, paginationMeta } from "@/lib/api/query";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyIdForWrite, companyWhereForRequest } from "@/lib/modules/scope";
 import { isOperator, leadWhere } from "@/lib/permissions";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 import { notifyNewLead } from "@/lib/telegram/service";
 
 const schema = z.object({
@@ -25,7 +25,7 @@ const schema = z.object({
 });
 
 export const GET = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATOR]);
+  const auth = await requireApiPermission(request, PERMISSION.LEAD_READ);
   const { page, limit, skip } = paginationFrom(request);
   const search = request.nextUrl.searchParams.get("search")?.trim();
   const campaignId = request.nextUrl.searchParams.get("campaignId");
@@ -50,7 +50,7 @@ export const GET = withApiHandler(async (request) => {
 });
 
 export const POST = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.LEAD_ASSIGN);
   const input = schema.parse(await request.json());
   let companyId = companyIdForWrite(auth, input.companyId);
   let campaignId = input.campaignId ?? null;

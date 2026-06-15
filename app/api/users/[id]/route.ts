@@ -3,18 +3,18 @@ import { z } from "zod";
 import { withApiHandler } from "@/lib/api/handler";
 import { ForbiddenError, NotFoundError } from "@/lib/api/errors";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireAnyApiPermission, requireApiPermission } from "@/lib/auth/api";
 import { hashPassword } from "@/lib/auth/password";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyWhere, isSuperAdmin } from "@/lib/permissions";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 type Context = { params: Promise<{ id: string }> };
 const updateSchema = z.object({ name: z.string().min(2).max(120).optional(), email: z.email().transform((value) => value.toLowerCase()).optional(), password: z.string().min(8).max(128).optional(), roleId: z.uuid().optional() });
 
 export const GET = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireAnyApiPermission(request, [PERMISSION.USER_CREATE, PERMISSION.USER_INVITE, PERMISSION.USER_UPDATE, PERMISSION.USER_DELETE]);
   const { id } = await params;
   const user = await prisma.user.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) }, select: { id: true, name: true, email: true, companyId: true, createdAt: true, updatedAt: true, roles: { where: { deletedAt: null }, select: { role: { select: { id: true, name: true } } } } } });
   if (!user) throw new NotFoundError("User");
@@ -22,7 +22,7 @@ export const GET = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const PATCH = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.USER_UPDATE);
   const { id } = await params;
   const input = updateSchema.parse(await request.json());
   const existing = await prisma.user.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) } });
@@ -39,7 +39,7 @@ export const PATCH = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const DELETE = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.USER_DELETE);
   const { id } = await params;
   if (id === auth.id) throw new ForbiddenError("You cannot delete your own account");
   const existing = await prisma.user.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) } });

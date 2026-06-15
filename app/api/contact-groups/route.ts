@@ -2,11 +2,11 @@ import { z } from "zod";
 import { ConflictError, NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyIdForWrite, companyWhereForRequest } from "@/lib/modules/scope";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 const schema = z.object({
   name: z.string().trim().min(2).max(120),
@@ -15,7 +15,7 @@ const schema = z.object({
 });
 
 export const GET = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CONTACT_READ);
   const companyId = request.nextUrl.searchParams.get("companyId");
   const groups = await prisma.contactGroup.findMany({
     where: { deletedAt: null, ...companyWhereForRequest(auth, companyId) },
@@ -26,7 +26,7 @@ export const GET = withApiHandler(async (request) => {
 });
 
 export const POST = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CONTACT_CREATE);
   const input = schema.parse(await request.json());
   const companyId = companyIdForWrite(auth, input.companyId);
   if (!(await prisma.company.findFirst({ where: { id: companyId, deletedAt: null } }))) throw new NotFoundError("Company");

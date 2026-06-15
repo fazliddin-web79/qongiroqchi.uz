@@ -3,11 +3,11 @@ import { z } from "zod";
 import { ForbiddenError, NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiAuth, requireApiPermission } from "@/lib/auth/api";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
-import { isOperator, leadWhere } from "@/lib/permissions";
-import { ROLES } from "@/lib/permissions/constants";
+import { assertPermission, isOperator, leadWhere } from "@/lib/permissions";
+import { PERMISSION, ROLES } from "@/lib/permissions/constants";
 
 type Context = { params: Promise<{ id: string }> };
 const schema = z.object({
@@ -19,7 +19,7 @@ const schema = z.object({
 });
 
 export const GET = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATOR]);
+  const auth = await requireApiPermission(request, PERMISSION.LEAD_READ);
   const { id } = await params;
   const lead = await prisma.lead.findFirst({ where: { id, deletedAt: null, ...leadWhere(auth) }, include: { contact: true, campaign: { select: { id: true, name: true } }, call: true, assignedTo: { select: { id: true, name: true, email: true } }, company: { select: { id: true, name: true } }, history: { where: { deletedAt: null }, orderBy: { createdAt: "desc" }, include: { user: { select: { id: true, name: true } } } } } });
   if (!lead) throw new NotFoundError("Lead");
@@ -30,6 +30,10 @@ export const PATCH = withApiHandler<Context>(async (request, { params }) => {
   const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATOR]);
   const { id } = await params;
   const input = schema.parse(await request.json());
+  const changes = Object.keys(input);
+  if (input.assignedToId !== undefined || input.source !== undefined) assertPermission(auth, PERMISSION.LEAD_ASSIGN);
+  if (input.status !== undefined || input.callbackAt !== undefined || changes.length === 0) assertPermission(auth, PERMISSION.LEAD_UPDATE_STATUS);
+  if (input.note !== undefined) assertPermission(auth, PERMISSION.LEAD_ADD_NOTE);
   const existing = await prisma.lead.findFirst({ where: { id, deletedAt: null, ...leadWhere(auth) } });
   if (!existing) throw new NotFoundError("Lead");
   if (isOperator(auth) && Object.keys(input).some((key) => !["status", "note", "callbackAt"].includes(key))) throw new ForbiddenError("Operators can only update lead status, note, and callback time");

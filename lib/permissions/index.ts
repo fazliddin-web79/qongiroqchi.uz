@@ -14,6 +14,10 @@ export function canAccess(user: AuthUser, permissions: string[]) {
   return permissions.every((permission) => hasPermission(user, permission));
 }
 
+export function canAccessAny(user: AuthUser, permissions: string[]) {
+  return permissions.some((permission) => hasPermission(user, permission));
+}
+
 export function isSuperAdmin(user: AuthUser) {
   return hasRole(user, ROLES.SUPER_ADMIN);
 }
@@ -32,6 +36,10 @@ export function assertRole(user: AuthUser, allowedRoles: string[]) {
 
 export function assertPermission(user: AuthUser, permission: string) {
   if (!hasPermission(user, permission)) throw new ForbiddenError();
+}
+
+export function assertAnyPermission(user: AuthUser, permissions: string[]) {
+  if (!canAccessAny(user, permissions)) throw new ForbiddenError();
 }
 
 export function companyWhere(user: AuthUser) {

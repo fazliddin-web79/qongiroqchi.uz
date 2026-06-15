@@ -3,17 +3,17 @@ import { NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { paginationFrom, paginationMeta } from "@/lib/api/query";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { assertCampaignSchedule, createCampaignSchema, parseStartTime } from "@/lib/campaigns/validation";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyIdForWrite, companyWhereForRequest } from "@/lib/modules/scope";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 import { assertCampaignLimit } from "@/lib/billing/service";
 import { getCompanySettings } from "@/lib/settings/service";
 
 export const GET = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CAMPAIGN_READ);
   const { page, limit, skip } = paginationFrom(request);
   const search = request.nextUrl.searchParams.get("search")?.trim();
   const contactGroupId = request.nextUrl.searchParams.get("contactGroupId");
@@ -35,7 +35,7 @@ export const GET = withApiHandler(async (request) => {
 });
 
 export const POST = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CAMPAIGN_CREATE);
   const input = createCampaignSchema.parse(await request.json());
   const companyId = companyIdForWrite(auth, input.companyId);
   await assertCampaignLimit(companyId);

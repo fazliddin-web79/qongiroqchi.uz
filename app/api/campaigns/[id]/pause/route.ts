@@ -2,16 +2,16 @@ import { CampaignStatus } from "@prisma/client";
 import { ConflictError, NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyWhere } from "@/lib/permissions";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 type Context = { params: Promise<{ id: string }> };
 
 export const POST = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CAMPAIGN_PAUSE);
   const { id } = await params;
   const campaign = await prisma.campaign.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) } });
   if (!campaign) throw new NotFoundError("Campaign");

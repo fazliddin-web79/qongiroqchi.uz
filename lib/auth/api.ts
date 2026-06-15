@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server";
 import { authConfig } from "@/auth.config";
 import { UnauthorizedError } from "@/lib/api/errors";
-import { assertRole } from "@/lib/permissions";
+import { assertAnyPermission, assertPermission, assertRole } from "@/lib/permissions";
 import { verifyAccessToken } from "./jwt";
 import { getAuthUser } from "./user";
 
@@ -12,6 +12,18 @@ export async function requireApiAuth(request: NextRequest, roles?: string[]) {
   const payload = await verifyAccessToken(token).catch(() => { throw new UnauthorizedError("Invalid or expired access token"); });
   const user = await getAuthUser(payload.sub);
   if (roles) assertRole(user, roles);
+  return user;
+}
+
+export async function requireApiPermission(request: NextRequest, permission: string, roles?: string[]) {
+  const user = await requireApiAuth(request, roles);
+  assertPermission(user, permission);
+  return user;
+}
+
+export async function requireAnyApiPermission(request: NextRequest, permissions: string[], roles?: string[]) {
+  const user = await requireApiAuth(request, roles);
+  assertAnyPermission(user, permissions);
   return user;
 }
 

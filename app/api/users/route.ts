@@ -4,13 +4,13 @@ import { withApiHandler } from "@/lib/api/handler";
 import { ForbiddenError, NotFoundError } from "@/lib/api/errors";
 import { paginationFrom, paginationMeta } from "@/lib/api/query";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireAnyApiPermission, requireApiPermission } from "@/lib/auth/api";
 import { hashPassword } from "@/lib/auth/password";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { isSuperAdmin } from "@/lib/permissions";
 import { companyWhereForRequest } from "@/lib/modules/scope";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 import { assertUserLimit } from "@/lib/billing/service";
 
 const createSchema = z.object({
@@ -22,7 +22,7 @@ const createSchema = z.object({
 });
 
 export const GET = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireAnyApiPermission(request, [PERMISSION.USER_CREATE, PERMISSION.USER_INVITE, PERMISSION.USER_UPDATE, PERMISSION.USER_DELETE]);
   const { page, limit, skip } = paginationFrom(request);
   const where = { deletedAt: null, ...companyWhereForRequest(auth, request.nextUrl.searchParams.get("companyId")) };
   const [items, total] = await prisma.$transaction([
@@ -33,7 +33,7 @@ export const GET = withApiHandler(async (request) => {
 });
 
 export const POST = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.USER_CREATE);
   const input = createSchema.parse(await request.json());
   const companyId = isSuperAdmin(auth) ? input.companyId : auth.companyId ?? undefined;
   if (!companyId) throw new ForbiddenError("A company is required for this user");

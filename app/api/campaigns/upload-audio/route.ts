@@ -4,9 +4,9 @@ import { join } from "node:path";
 import { AppError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireAnyApiPermission } from "@/lib/auth/api";
 import { recordAudit } from "@/lib/logging/audit-log";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 export const runtime = "nodejs";
 
@@ -21,7 +21,7 @@ const EXTENSIONS: Record<string, string> = {
 };
 
 export const POST = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireAnyApiPermission(request, [PERMISSION.CAMPAIGN_CREATE, PERMISSION.CAMPAIGN_UPDATE]);
   const form = await request.formData();
   const file = form.get("file");
   if (!(file instanceof File)) throw new AppError("Audio file is required", 422, "FILE_REQUIRED");

@@ -2,17 +2,17 @@ import { z } from "zod";
 import { ConflictError, ForbiddenError, NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyWhere } from "@/lib/permissions";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 type Context = { params: Promise<{ id: string }> };
 const schema = z.object({ name: z.string().trim().min(2).max(120).optional(), description: z.string().trim().max(500).nullable().optional() });
 
 export const GET = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CONTACT_READ);
   const { id } = await params;
   const group = await prisma.contactGroup.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) }, include: { _count: { select: { contacts: { where: { deletedAt: null } }, campaigns: { where: { deletedAt: null } } } } } });
   if (!group) throw new NotFoundError("Contact group");
@@ -20,7 +20,7 @@ export const GET = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const PATCH = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CONTACT_UPDATE);
   const { id } = await params;
   const input = schema.parse(await request.json());
   const existing = await prisma.contactGroup.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) } });
@@ -35,7 +35,7 @@ export const PATCH = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const DELETE = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CONTACT_DELETE);
   const { id } = await params;
   const existing = await prisma.contactGroup.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) }, include: { _count: { select: { campaigns: { where: { deletedAt: null } } } } } });
   if (!existing) throw new NotFoundError("Contact group");

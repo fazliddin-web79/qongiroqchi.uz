@@ -2,16 +2,16 @@ import { ContactStatus, Prisma } from "@prisma/client";
 import { AppError, NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { parseContactImport } from "@/lib/contacts/import";
 import { normalizePhone } from "@/lib/contacts/phone";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyIdForWrite } from "@/lib/modules/scope";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 export const POST = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CONTACT_IMPORT);
   const form = await request.formData();
   const file = form.get("file");
   if (!(file instanceof File)) throw new AppError("CSV or XLSX file is required", 422, "FILE_REQUIRED");

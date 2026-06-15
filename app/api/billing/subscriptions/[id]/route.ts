@@ -3,16 +3,16 @@ import { z } from "zod";
 import { ConflictError, NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION, ROLES } from "@/lib/permissions/constants";
 
 type Context = { params: Promise<{ id: string }> };
 const schema = z.object({ status: z.nativeEnum(SubscriptionStatus).optional(), endsAt: z.string().datetime().optional() });
 
 export const PATCH = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.BILLING_UPDATE, [ROLES.SUPER_ADMIN]);
   const { id } = await params;
   const existing = await prisma.companySubscription.findFirst({ where: { id, deletedAt: null } });
   if (!existing) throw new NotFoundError("Subscription");

@@ -3,14 +3,13 @@ import { hash } from "bcryptjs";
 
 const prisma = new PrismaClient();
 const permissions = [
-  "users.read", "users.create", "users.update", "users.delete", "companies.read", "companies.create", "companies.update", "companies.delete",
-  "roles.read", "roles.create", "roles.update", "roles.delete", "permissions.read", "permissions.create", "permissions.update", "permissions.delete",
-  "leads.read", "leads.create", "leads.update", "leads.delete", "auditLogs.read", "errorLogs.read", "errorLogs.update",
-  "contacts.read", "contacts.create", "contacts.update", "contacts.delete", "contacts.import",
-  "contactGroups.read", "contactGroups.create", "contactGroups.update", "contactGroups.delete",
-  "campaigns.read", "campaigns.create", "campaigns.update", "campaigns.delete", "campaigns.upload",
-  "calls.read", "calls.update", "queue.read", "queue.update", "settings.read", "settings.update", "billing.read", "billing.update", "dashboard.read", "leadHistory.read",
+  "campaign.create", "campaign.read", "campaign.update", "campaign.delete", "campaign.start", "campaign.pause",
+  "contact.create", "contact.import", "contact.read", "contact.update", "contact.delete", "contact.export",
+  "lead.read", "lead.assign", "lead.update_status", "lead.add_note", "lead.export",
+  "user.create", "user.invite", "user.update", "user.delete",
+  "billing.read", "billing.update", "error.read", "audit.read", "settings.update",
 ];
+const operatorPermissions = new Set(["lead.read", "lead.update_status", "lead.add_note"]);
 
 async function main() {
   await prisma.plan.upsert({ where: { name: "Free" }, update: { deletedAt: null }, create: { name: "Free", monthlyPrice: 0, callLimit: 1000, userLimit: 5, campaignLimit: 5, features: { telegram: true, queue: true } } });
@@ -19,6 +18,11 @@ async function main() {
   role = role
     ? await prisma.role.update({ where: { id: role.id }, data: { deletedAt: null, permissions: { set: records.map(({ id }) => ({ id })) } } })
     : await prisma.role.create({ data: { name: RoleName.SUPER_ADMIN, permissions: { connect: records.map(({ id }) => ({ id })) } } });
+  const roles = await prisma.role.findMany({ where: { deletedAt: null } });
+  for (const currentRole of roles) {
+    const allowed = currentRole.name === RoleName.OPERATOR ? records.filter(({ key }) => operatorPermissions.has(key)) : records;
+    await prisma.role.update({ where: { id: currentRole.id }, data: { permissions: { set: allowed.map(({ id }) => ({ id })) } } });
+  }
   const email = process.env.SUPER_ADMIN_EMAIL ?? "superadmin@autocall.local";
   const passwordHash = await hash(process.env.SUPER_ADMIN_PASSWORD ?? "ChangeMe123!", 12);
   const user = await prisma.user.upsert({ where: { email }, update: { deletedAt: null, passwordHash }, create: { email, name: "Super Admin", passwordHash } });

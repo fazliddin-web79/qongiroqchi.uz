@@ -10,7 +10,7 @@ export async function requireApiAuth(request: NextRequest, roles?: string[]) {
   const token = bearer || request.cookies.get(authConfig.accessCookie)?.value;
   if (!token) throw new UnauthorizedError();
   const payload = await verifyAccessToken(token).catch(() => { throw new UnauthorizedError("Invalid or expired access token"); });
-  const user = await getAuthUser(payload.sub);
+  const user = await getAuthUser(payload.sub, payload.impersonationId);
   if (roles) assertRole(user, roles);
   return user;
 }

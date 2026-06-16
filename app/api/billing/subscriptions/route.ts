@@ -7,8 +7,8 @@ import { getBillingUsage } from "@/lib/billing/service";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyWhereForRequest } from "@/lib/modules/scope";
-import { isSuperAdmin } from "@/lib/permissions";
-import { PERMISSION, ROLES } from "@/lib/permissions/constants";
+import { hasPermission } from "@/lib/permissions";
+import { PERMISSION } from "@/lib/permissions/constants";
 import { subscriptionSchema } from "@/lib/billing/validation";
 
 export const GET = withApiHandler(async (request) => {
@@ -17,11 +17,11 @@ export const GET = withApiHandler(async (request) => {
   const where = { deletedAt: null, ...companyWhereForRequest(auth, requestedCompanyId) };
   const items = await prisma.companySubscription.findMany({ where, orderBy: { startsAt: "desc" }, include: { plan: true, company: { select: { id: true, name: true } } } });
   const usage = requestedCompanyId || auth.companyId ? await getBillingUsage(requestedCompanyId || auth.companyId!).then(({ usage }) => usage).catch(() => null) : null;
-  return apiSuccess({ items, usage, canManage: isSuperAdmin(auth) });
+  return apiSuccess({ items, usage, canManage: hasPermission(auth, PERMISSION.BILLING_UPDATE) });
 });
 
 export const POST = withApiHandler(async (request) => {
-  const auth = await requireApiPermission(request, PERMISSION.BILLING_UPDATE, [ROLES.SUPER_ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.BILLING_UPDATE);
   const input = subscriptionSchema.parse(await request.json());
   const [company, plan] = await Promise.all([
     prisma.company.findFirst({ where: { id: input.companyId, deletedAt: null } }),

@@ -8,60 +8,78 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(uuid()) @db.Uuid
-  email         String         @unique
-  name          String
-  passwordHash  String?
-  companyId     String?        @db.Uuid
-  company       Company?       @relation(fields: [companyId], references: [id])
-  roles         UserRole[]
-  auditLogs     AuditLog[]
-  errorLogs     ErrorLog[]
-  refreshTokens RefreshToken[]
-  assignedLeads Lead[]         @relation("AssignedLeads")
-  campaigns     Campaign[]     @relation("CampaignCreator")
-  leadHistory   LeadHistory[]
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  deletedAt     DateTime?
+  id                    String                 @id @default(uuid()) @db.Uuid
+  email                 String                 @unique
+  name                  String
+  passwordHash          String?
+  companyId             String?                @db.Uuid
+  company               Company?               @relation(fields: [companyId], references: [id])
+  roles                 UserRole[]
+  auditLogs             AuditLog[]
+  errorLogs             ErrorLog[]
+  refreshTokens         RefreshToken[]
+  assignedLeads         Lead[]                 @relation("AssignedLeads")
+  campaigns             Campaign[]             @relation("CampaignCreator")
+  reviewedCampaigns     Campaign[]             @relation("CampaignReviewer")
+  uploadedAudioAssets   AudioAsset[]           @relation("AudioUploader")
+  reviewedAudioAssets   AudioAsset[]           @relation("AudioReviewer")
+  moderationReviews     ModerationReview[]
+  notifications         Notification[]
+  impersonationSessions ImpersonationSession[] @relation("ImpersonatingUser")
+  leadHistory           LeadHistory[]
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  deletedAt             DateTime?
 
   @@index([companyId])
 }
 
 model Company {
-  id            String                @id @default(uuid()) @db.Uuid
-  name          String
-  slug          String                @unique
-  users         User[]
-  roles         Role[]
-  auditLogs     AuditLog[]
-  errorLogs     ErrorLog[]
-  leads         Lead[]
-  contacts      Contact[]
-  groups        ContactGroup[]
-  campaigns     Campaign[]
-  calls         Call[]
-  settings      CompanySetting?
-  subscriptions CompanySubscription[]
-  createdAt     DateTime              @default(now())
-  updatedAt     DateTime              @updatedAt
-  deletedAt     DateTime?
+  id                    String                 @id @default(uuid()) @db.Uuid
+  name                  String
+  slug                  String                 @unique
+  status                CompanyStatus          @default(ACTIVE)
+  suspendedAt           DateTime?
+  suspensionReason      String?
+  users                 User[]
+  roles                 Role[]
+  auditLogs             AuditLog[]
+  errorLogs             ErrorLog[]
+  leads                 Lead[]
+  contacts              Contact[]
+  groups                ContactGroup[]
+  campaigns             Campaign[]
+  calls                 Call[]
+  audioAssets           AudioAsset[]
+  moderationReviews     ModerationReview[]
+  notifications         Notification[]
+  impersonationSessions ImpersonationSession[]
+  settings              CompanySetting?
+  subscriptions         CompanySubscription[]
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
+  deletedAt             DateTime?
 }
 
 model CompanySetting {
-  id                String    @id @default(uuid()) @db.Uuid
-  companyId         String    @unique @db.Uuid
-  telegramBotToken  String?
-  telegramChatId    String?
-  defaultRetryCount Int       @default(0)
-  workingHours      Json      @default("{\"enabled\":false,\"start\":\"09:00\",\"end\":\"18:00\",\"days\":[1,2,3,4,5]}")
-  callSpeedLimit    Int       @default(60)
-  defaultLanguage   String    @default("uz")
-  timezone          String    @default("Asia/Tashkent")
-  company           Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  createdAt         DateTime  @default(now())
-  updatedAt         DateTime  @updatedAt
-  deletedAt         DateTime?
+  id                  String    @id @default(uuid()) @db.Uuid
+  companyId           String    @unique @db.Uuid
+  telegramBotToken    String?
+  telegramChatId      String?
+  defaultRetryCount   Int       @default(0)
+  workingHours        Json      @default("{\"enabled\":false,\"start\":\"09:00\",\"end\":\"18:00\",\"days\":[1,2,3,4,5]}")
+  callSpeedLimit      Int       @default(60)
+  dailyCallLimit      Int       @default(1000)
+  concurrentCallLimit Int       @default(5)
+  retryFailed         Boolean   @default(true)
+  retryBusy           Boolean   @default(true)
+  retryUnanswered     Boolean   @default(true)
+  defaultLanguage     String    @default("uz")
+  timezone            String    @default("Asia/Tashkent")
+  company             Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  deletedAt           DateTime?
 }
 
 model Plan {
@@ -279,32 +297,135 @@ model ContactGroup {
 }
 
 model Campaign {
-  id             String         @id @default(uuid()) @db.Uuid
-  companyId      String         @db.Uuid
-  name           String
-  description    String?
-  audioUrl       String?
-  contactGroupId String         @db.Uuid
-  status         CampaignStatus @default(DRAFT)
-  startTime      DateTime?
-  retryEnabled   Boolean        @default(false)
-  retryCount     Int            @default(0)
-  ivrSettings    Json           @default("{}")
-  createdById    String         @db.Uuid
-  company        Company        @relation(fields: [companyId], references: [id])
-  contactGroup   ContactGroup   @relation(fields: [contactGroupId], references: [id])
-  createdBy      User           @relation("CampaignCreator", fields: [createdById], references: [id])
-  calls          Call[]
-  leads          Lead[]
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
-  deletedAt      DateTime?
+  id                String             @id @default(uuid()) @db.Uuid
+  companyId         String             @db.Uuid
+  name              String
+  description       String?
+  audioUrl          String?
+  audioAssetId      String?            @db.Uuid
+  contactGroupId    String             @db.Uuid
+  status            CampaignStatus     @default(DRAFT)
+  rejectionReason   String?
+  submittedAt       DateTime?
+  reviewedAt        DateTime?
+  reviewedById      String?            @db.Uuid
+  startTime         DateTime?
+  retryEnabled      Boolean            @default(false)
+  retryCount        Int                @default(0)
+  ivrSettings       Json               @default("{}")
+  createdById       String             @db.Uuid
+  company           Company            @relation(fields: [companyId], references: [id])
+  contactGroup      ContactGroup       @relation(fields: [contactGroupId], references: [id])
+  createdBy         User               @relation("CampaignCreator", fields: [createdById], references: [id])
+  reviewedBy        User?              @relation("CampaignReviewer", fields: [reviewedById], references: [id])
+  audioAsset        AudioAsset?        @relation(fields: [audioAssetId], references: [id])
+  moderationReviews ModerationReview[]
+  calls             Call[]
+  leads             Lead[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  deletedAt         DateTime?
 
   @@index([companyId])
   @@index([contactGroupId])
   @@index([createdById])
+  @@index([audioAssetId])
+  @@index([reviewedById])
   @@index([status])
   @@index([startTime])
+}
+
+model AudioAsset {
+  id                String             @id @default(uuid()) @db.Uuid
+  companyId         String             @db.Uuid
+  url               String
+  originalName      String
+  mimeType          String
+  sizeBytes         Int
+  durationSeconds   Int?
+  status            AudioReviewStatus  @default(PENDING_REVIEW)
+  rejectionReason   String?
+  createdById       String             @db.Uuid
+  reviewedById      String?            @db.Uuid
+  reviewedAt        DateTime?
+  company           Company            @relation(fields: [companyId], references: [id])
+  createdBy         User               @relation("AudioUploader", fields: [createdById], references: [id])
+  reviewedBy        User?              @relation("AudioReviewer", fields: [reviewedById], references: [id])
+  campaigns         Campaign[]
+  moderationReviews ModerationReview[]
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  deletedAt         DateTime?
+
+  @@index([companyId])
+  @@index([createdById])
+  @@index([reviewedById])
+  @@index([status])
+}
+
+model ModerationReview {
+  id           String                @id @default(uuid()) @db.Uuid
+  subjectType  ModerationSubjectType
+  decision     ModerationDecision
+  reason       String?
+  metadata     Json?
+  companyId    String                @db.Uuid
+  reviewerId   String                @db.Uuid
+  campaignId   String?               @db.Uuid
+  audioAssetId String?               @db.Uuid
+  company      Company               @relation(fields: [companyId], references: [id])
+  reviewer     User                  @relation(fields: [reviewerId], references: [id])
+  campaign     Campaign?             @relation(fields: [campaignId], references: [id])
+  audioAsset   AudioAsset?           @relation(fields: [audioAssetId], references: [id])
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+  deletedAt    DateTime?
+
+  @@index([companyId])
+  @@index([reviewerId])
+  @@index([campaignId])
+  @@index([audioAssetId])
+  @@index([subjectType, decision])
+}
+
+model Notification {
+  id              String               @id @default(uuid()) @db.Uuid
+  audience        NotificationAudience
+  type            String
+  title           String
+  message         String
+  metadata        Json?
+  companyId       String?              @db.Uuid
+  recipientUserId String?              @db.Uuid
+  readAt          DateTime?
+  company         Company?             @relation(fields: [companyId], references: [id])
+  recipientUser   User?                @relation(fields: [recipientUserId], references: [id])
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  deletedAt       DateTime?
+
+  @@index([audience])
+  @@index([companyId])
+  @@index([recipientUserId])
+  @@index([readAt])
+}
+
+model ImpersonationSession {
+  id             String    @id @default(uuid()) @db.Uuid
+  platformUserId String    @db.Uuid
+  companyId      String    @db.Uuid
+  reason         String?
+  expiresAt      DateTime
+  endedAt        DateTime?
+  platformUser   User      @relation("ImpersonatingUser", fields: [platformUserId], references: [id])
+  company        Company   @relation(fields: [companyId], references: [id])
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  deletedAt      DateTime?
+
+  @@index([platformUserId])
+  @@index([companyId])
+  @@index([expiresAt])
 }
 
 model Call {
@@ -340,8 +461,21 @@ model Call {
 
 enum RoleName {
   SUPER_ADMIN
-  ADMIN
+  PLATFORM_ADMIN
+  MODERATOR
+  SUPPORT
+  BILLING_MANAGER
+  COMPANY_OWNER
+  COMPANY_ADMIN
+  MANAGER
   OPERATOR
+  ANALYST
+  ACCOUNTANT
+}
+
+enum CompanyStatus {
+  ACTIVE
+  SUSPENDED
 }
 
 enum ContactStatus {
@@ -352,11 +486,40 @@ enum ContactStatus {
 
 enum CampaignStatus {
   DRAFT
+  AUDIO_UPLOADED
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  CHANGES_REQUESTED
   SCHEDULED
   RUNNING
   PAUSED
+  CANCELED
   COMPLETED
   FAILED
+}
+
+enum AudioReviewStatus {
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum ModerationSubjectType {
+  AUDIO
+  CAMPAIGN
+}
+
+enum ModerationDecision {
+  APPROVED
+  REJECTED
+  CHANGES_REQUESTED
+}
+
+enum NotificationAudience {
+  PLATFORM
+  COMPANY
+  USER
 }
 
 enum CallStatus {

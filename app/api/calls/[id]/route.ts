@@ -3,12 +3,12 @@ import { z } from "zod";
 import { NotFoundError } from "@/lib/api/errors";
 import { withApiHandler } from "@/lib/api/handler";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { createLeadFromCall } from "@/lib/calls/pipeline";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyWhere } from "@/lib/permissions";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 type Context = { params: Promise<{ id: string }> };
 const terminalStatuses: CallStatus[] = [CallStatus.ANSWERED, CallStatus.NOT_ANSWERED, CallStatus.BUSY, CallStatus.FAILED, CallStatus.COMPLETED];
@@ -25,7 +25,7 @@ const schema = z.object({
 });
 
 export const GET = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CALL_READ);
   const { id } = await params;
   const call = await prisma.call.findFirst({ where: { id, ...companyWhere(auth) }, include: { contact: true, campaign: { select: { id: true, name: true } }, lead: { include: { assignedTo: { select: { id: true, name: true } } } }, company: { select: { id: true, name: true } } } });
   if (!call) throw new NotFoundError("Call");
@@ -33,7 +33,7 @@ export const GET = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const PATCH = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CALL_UPDATE);
   const { id } = await params;
   const input = schema.parse(await request.json());
   const existing = await prisma.call.findFirst({ where: { id, ...companyWhere(auth) } });

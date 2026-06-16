@@ -3,6 +3,9 @@ export type AuthUser = {
   name: string;
   email: string;
   companyId?: string | null;
+  impersonatedCompanyId?: string | null;
+  isImpersonating?: boolean;
+  accessLevel: "PLATFORM" | "COMPANY";
   roles: string[];
   permissions: string[];
 };
@@ -14,6 +17,7 @@ export type AuthSession = {
 
 export type AccessTokenPayload = {
   sub: string;
+  impersonationId?: string;
   type: "access";
 };
 

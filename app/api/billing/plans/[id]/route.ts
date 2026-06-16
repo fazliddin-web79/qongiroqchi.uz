@@ -6,13 +6,13 @@ import { requireApiPermission } from "@/lib/auth/api";
 import { planSchema } from "@/lib/billing/validation";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
-import { PERMISSION, ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 type Context = { params: Promise<{ id: string }> };
 const updateSchema = planSchema.partial();
 
 export const PATCH = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiPermission(request, PERMISSION.BILLING_UPDATE, [ROLES.SUPER_ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.BILLING_UPDATE);
   const { id } = await params;
   if (!(await prisma.plan.findFirst({ where: { id, deletedAt: null } }))) throw new NotFoundError("Plan");
   const input = updateSchema.parse(await request.json());
@@ -22,7 +22,7 @@ export const PATCH = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const DELETE = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiPermission(request, PERMISSION.BILLING_UPDATE, [ROLES.SUPER_ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.BILLING_UPDATE);
   const { id } = await params;
   if (!(await prisma.plan.findFirst({ where: { id, deletedAt: null } }))) throw new NotFoundError("Plan");
   if (await prisma.companySubscription.count({ where: { planId: id, deletedAt: null, status: { in: ["ACTIVE", "TRIAL"] } } })) throw new ConflictError("Plan has active subscriptions");

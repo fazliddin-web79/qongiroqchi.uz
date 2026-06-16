@@ -7,8 +7,8 @@ import { requireAnyApiPermission, requireApiPermission } from "@/lib/auth/api";
 import { hashPassword } from "@/lib/auth/password";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
-import { companyWhere, isSuperAdmin } from "@/lib/permissions";
-import { PERMISSION } from "@/lib/permissions/constants";
+import { companyWhere, isPlatformUser } from "@/lib/permissions";
+import { PERMISSION, PLATFORM_ROLES } from "@/lib/permissions/constants";
 
 type Context = { params: Promise<{ id: string }> };
 const updateSchema = z.object({ name: z.string().min(2).max(120).optional(), email: z.email().transform((value) => value.toLowerCase()).optional(), password: z.string().min(8).max(128).optional(), roleId: z.uuid().optional() });
@@ -29,7 +29,8 @@ export const PATCH = withApiHandler<Context>(async (request, { params }) => {
   if (!existing) throw new NotFoundError("User");
   if (input.roleId) {
     const role = await prisma.role.findFirst({ where: { id: input.roleId, deletedAt: null, companyId: existing.companyId } });
-    if (!role || (!isSuperAdmin(auth) && role.name === RoleName.SUPER_ADMIN)) throw new ForbiddenError("Invalid role assignment");
+    const platformRole = PLATFORM_ROLES.includes(role?.name as typeof PLATFORM_ROLES[number]);
+    if (!role || (!isPlatformUser(auth) && platformRole)) throw new ForbiddenError("Invalid role assignment");
     await prisma.userRole.updateMany({ where: { userId: id, deletedAt: null }, data: { deletedAt: new Date() } });
     await prisma.userRole.upsert({ where: { userId_roleId: { userId: id, roleId: role.id } }, update: { deletedAt: null }, create: { userId: id, roleId: role.id } });
   }
@@ -42,8 +43,9 @@ export const DELETE = withApiHandler<Context>(async (request, { params }) => {
   const auth = await requireApiPermission(request, PERMISSION.USER_DELETE);
   const { id } = await params;
   if (id === auth.id) throw new ForbiddenError("You cannot delete your own account");
-  const existing = await prisma.user.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) } });
+  const existing = await prisma.user.findFirst({ where: { id, deletedAt: null, ...companyWhere(auth) }, include: { roles: { where: { deletedAt: null }, include: { role: true } } } });
   if (!existing) throw new NotFoundError("User");
+  if (!auth.roles.includes(RoleName.SUPER_ADMIN) && existing.roles.some(({ role }) => role.name === RoleName.SUPER_ADMIN)) throw new ForbiddenError("Only SUPER_ADMIN can delete another SUPER_ADMIN");
   await prisma.user.update({ where: { id }, data: { deletedAt: new Date() } });
   await prisma.refreshToken.updateMany({ where: { userId: id, revokedAt: null }, data: { revokedAt: new Date() } });
   await recordAudit({ action: "USER_DELETE", entity: "User", entityId: id, user: auth, request });

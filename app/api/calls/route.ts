@@ -2,13 +2,13 @@ import { CallStatus, Prisma } from "@prisma/client";
 import { withApiHandler } from "@/lib/api/handler";
 import { paginationFrom, paginationMeta } from "@/lib/api/query";
 import { apiSuccess } from "@/lib/api/response";
-import { requireApiAuth } from "@/lib/auth/api";
+import { requireApiPermission } from "@/lib/auth/api";
 import { prisma } from "@/lib/db/prisma";
 import { companyWhereForRequest } from "@/lib/modules/scope";
-import { ROLES } from "@/lib/permissions/constants";
+import { PERMISSION } from "@/lib/permissions/constants";
 
 export const GET = withApiHandler(async (request) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiPermission(request, PERMISSION.CALL_READ);
   const { page, limit, skip } = paginationFrom(request);
   const search = request.nextUrl.searchParams.get("search")?.trim();
   const campaignId = request.nextUrl.searchParams.get("campaignId");

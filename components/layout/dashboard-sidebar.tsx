@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Building2, ContactRound, CreditCard, FileWarning, Headphones, History, ListRestart, Megaphone, PhoneCall, Settings, Target, Users, X } from "lucide-react";
+import { BarChart3, Building2, ContactRound, CreditCard, FileCheck2, FileWarning, Headphones, History, ListRestart, Megaphone, PhoneCall, Settings, Target, Users, X } from "lucide-react";
 import { useTranslations } from "@/components/providers/i18n-provider";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -13,6 +13,7 @@ const items = [
   { key: "companies", href: "/dashboard/companies", icon: Building2 },
   { key: "users", href: "/dashboard/users", icon: Users },
   { key: "campaigns", href: "/dashboard/campaigns", icon: Megaphone },
+  { key: "moderation", href: "/dashboard/moderation", icon: FileCheck2 },
   { key: "contacts", href: "/dashboard/contacts", icon: ContactRound },
   { key: "calls", href: "/dashboard/calls", icon: PhoneCall },
   { key: "leads", href: "/dashboard/leads", icon: Target },

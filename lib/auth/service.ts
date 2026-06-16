@@ -6,7 +6,7 @@ import type { AuthSession } from "@/types/auth";
 import { getAuthUser } from "./user";
 
 const demoSession: AuthSession = {
-  user: { id: "demo-user", name: "Demo Admin", email: "admin@example.com", roles: ["SUPER_ADMIN"], permissions: ["*"] },
+  user: { id: "demo-user", name: "Demo Admin", email: "admin@example.com", accessLevel: "PLATFORM", roles: ["SUPER_ADMIN"], permissions: ["*"] },
   expiresAt: "2099-01-01T00:00:00.000Z",
 };
 
@@ -16,7 +16,7 @@ export async function getSession(): Promise<AuthSession | null> {
   if (!token) return null;
   try {
     const payload = await verifyAccessToken(token);
-    return { user: await getAuthUser(payload.sub), expiresAt: new Date(Date.now() + authConfig.accessTokenMaxAge * 1000).toISOString() };
+    return { user: await getAuthUser(payload.sub, payload.impersonationId), expiresAt: new Date(Date.now() + authConfig.accessTokenMaxAge * 1000).toISOString() };
   } catch { return null; }
 }
 

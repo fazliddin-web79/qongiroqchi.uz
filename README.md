@@ -74,6 +74,10 @@ The PostgreSQL schema includes the auth/RBAC foundation plus `Contact`,
 `ContactGroup`, `Campaign`, `Call`, `Lead`, and `LeadHistory` modules.
 It also includes company settings, billing plans, and subscription limits.
 
+The platform uses a two-level SaaS security model, company suspension,
+short-lived audited impersonation, audio/campaign moderation, and notifications.
+See [docs/saas-architecture.md](docs/saas-architecture.md).
+
 ```bash
 npm run db:generate
 npm run db:migrate -- --name init
@@ -111,7 +115,9 @@ lib/api/              Shared API response, error, and pagination helpers
 lib/db/               Prisma client
 lib/i18n/             Locale configuration and server dictionary loading
 lib/logging/          Audit and backend error persistence
-lib/permissions/      Role and permission helpers
+lib/permissions/      Platform/company role and tenant-scope helpers
+lib/moderation/       Audio and campaign approval workflow
+lib/notifications/    Platform, company, and user notifications
 lib/queue/            BullMQ queue configuration and operations
 lib/telephony/        Replaceable telephony adapter and mock provider
 lib/billing/          Subscription usage and limit enforcement
@@ -132,8 +138,9 @@ workers/              Independently deployed BullMQ workers
   Contacts, Campaigns, Calls, Dashboard statistics, AuditLogs, and ErrorLogs
   endpoints.
 - `lib/api/handler.ts` normalizes API errors and records them in `ErrorLog`.
-- `lib/permissions` enforces global SUPER_ADMIN, company-scoped ADMIN, and
-  assigned-lead-only OPERATOR access.
+- `lib/permissions` separates platform roles from tenant-scoped company roles.
+- `lib/moderation` prevents campaigns from launching before campaign and audio
+  approval.
 - `middleware.ts` protects dashboard pages when `AUTH_ENFORCED=true`.
 
 ## Auto-Call Queue

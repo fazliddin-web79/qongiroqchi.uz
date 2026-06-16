@@ -44,6 +44,7 @@ export async function enqueueCampaignCalls(campaignId: string) {
       companyId: true,
       name: true,
       audioUrl: true,
+      audioAsset: { select: { url: true } },
       retryEnabled: true,
       retryCount: true,
       calls: {
@@ -65,7 +66,7 @@ export async function enqueueCampaignCalls(campaignId: string) {
       campaignId: campaign.id,
       campaignName: campaign.name,
       phone: call.phone,
-      audioUrl: campaign.audioUrl,
+      audioUrl: campaign.audioAsset?.url ?? campaign.audioUrl,
     },
     opts: {
       jobId: call.id,

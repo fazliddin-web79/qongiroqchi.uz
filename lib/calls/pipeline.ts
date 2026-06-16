@@ -1,21 +1,29 @@
-import { CampaignStatus, ContactStatus, LeadStatus, RoleName } from "@prisma/client";
+import { AudioReviewStatus, CampaignStatus, CompanyStatus, ContactStatus, LeadStatus, RoleName } from "@prisma/client";
 import { ConflictError, NotFoundError } from "@/lib/api/errors";
 import { prisma } from "@/lib/db/prisma";
 import { enqueueCampaignCalls } from "@/lib/queue/call-queue";
 import { assertCallLimit } from "@/lib/billing/service";
 import { notifyNewLead } from "@/lib/telegram/service";
+import { getCompanySettings } from "@/lib/settings/service";
 
 export async function launchCampaign(campaignId: string) {
   const campaign = await prisma.campaign.findFirst({
     where: { id: campaignId, deletedAt: null },
-    include: { contactGroup: { include: { contacts: { where: { deletedAt: null, status: ContactStatus.ACTIVE }, select: { id: true, phone: true } } } } },
+    include: { audioAsset: true, company: true, contactGroup: { include: { contacts: { where: { deletedAt: null, status: ContactStatus.ACTIVE }, select: { id: true, phone: true } } } } },
   });
   if (!campaign) throw new NotFoundError("Campaign");
-  if (campaign.status === CampaignStatus.COMPLETED) throw new ConflictError("Completed campaign cannot be started again");
+  if (campaign.company.status !== CompanyStatus.ACTIVE) throw new ConflictError("Suspended companies cannot launch campaigns");
+  if (!([CampaignStatus.APPROVED, CampaignStatus.SCHEDULED] as CampaignStatus[]).includes(campaign.status)) throw new ConflictError("Campaign must be approved before launch");
+  if (campaign.startTime && campaign.startTime > new Date()) throw new ConflictError("Scheduled campaign is not due yet");
+  if (!campaign.audioAsset || campaign.audioAsset.status !== AudioReviewStatus.APPROVED) throw new ConflictError("Campaign audio must be approved before launch");
   if (!campaign.contactGroup.contacts.length) throw new ConflictError("Campaign contact group has no active contacts");
   const existingContacts = await prisma.call.findMany({ where: { campaignId: campaign.id }, select: { contactId: true } });
   const existingIds = new Set(existingContacts.map(({ contactId }) => contactId));
   await assertCallLimit(campaign.companyId, campaign.contactGroup.contacts.filter(({ id }) => !existingIds.has(id)).length);
+  const settings = await getCompanySettings(campaign.companyId);
+  const startOfDay = new Date(); startOfDay.setUTCHours(0, 0, 0, 0);
+  const callsToday = await prisma.call.count({ where: { companyId: campaign.companyId, createdAt: { gte: startOfDay } } });
+  if (callsToday + campaign.contactGroup.contacts.length > settings.dailyCallLimit) throw new ConflictError("Company daily call limit would be exceeded");
 
   const created = await prisma.call.createMany({
     data: campaign.contactGroup.contacts.map((contact) => ({ companyId: campaign.companyId, campaignId: campaign.id, contactId: contact.id, phone: contact.phone })),

@@ -5,7 +5,7 @@ import { ConflictError } from "@/lib/api/errors";
 import { apiSuccess } from "@/lib/api/response";
 import { prisma } from "@/lib/db/prisma";
 import { hashPassword } from "@/lib/auth/password";
-import { ensurePermissions } from "@/lib/auth/roles";
+import { ensureDefaultCompanyRoles } from "@/lib/auth/roles";
 import { createTokenPair, setAuthCookies } from "@/lib/auth/tokens";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { ensureDefaultCompanySetup } from "@/lib/billing/service";
@@ -27,12 +27,12 @@ export const POST = withApiHandler(async (request) => {
   ]);
   if (emailExists) throw new ConflictError("Email is already registered");
   if (slugExists) throw new ConflictError("Company slug is already in use");
-  const permissions = await ensurePermissions();
   const passwordHash = await hashPassword(input.password);
   const user = await prisma.$transaction(async (tx) => {
     const company = await tx.company.create({ data: { name: input.companyName, slug } });
     await ensureDefaultCompanySetup(tx, company.id);
-    const role = await tx.role.create({ data: { name: RoleName.ADMIN, companyId: company.id, permissions: { connect: permissions.map(({ id }) => ({ id })) } } });
+    const roles = await ensureDefaultCompanyRoles(tx, company.id);
+    const role = roles.find(({ name }) => name === RoleName.COMPANY_OWNER)!;
     return tx.user.create({ data: { name: input.name, email: input.email, passwordHash, companyId: company.id, roles: { create: { roleId: role.id } } } });
   });
   const pair = await createTokenPair(user.id);

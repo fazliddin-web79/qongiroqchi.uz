@@ -41,6 +41,12 @@ export function setAuthCookies(response: NextResponse, pair: { accessToken: stri
   return response;
 }
 
+export function setAccessCookie(response: NextResponse, accessToken: string) {
+  const secure = process.env.NODE_ENV === "production";
+  response.cookies.set(authConfig.accessCookie, accessToken, { httpOnly: true, secure, sameSite: "lax", path: "/", maxAge: authConfig.accessTokenMaxAge });
+  return response;
+}
+
 export function clearAuthCookies(response: NextResponse) {
   response.cookies.set(authConfig.accessCookie, "", { httpOnly: true, path: "/", maxAge: 0 });
   response.cookies.set(authConfig.refreshCookie, "", { httpOnly: true, path: "/", maxAge: 0 });

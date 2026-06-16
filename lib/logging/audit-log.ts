@@ -19,7 +19,7 @@ export async function recordAudit(input: {
         entityId: input.entityId,
         metadata: input.metadata,
         userId: input.user?.id,
-        companyId: input.user?.companyId ?? undefined,
+        companyId: input.user?.impersonatedCompanyId ?? input.user?.companyId ?? undefined,
         ipAddress: input.request?.headers.get("x-forwarded-for")?.split(",")[0]?.trim(),
         userAgent: input.request?.headers.get("user-agent"),
       },

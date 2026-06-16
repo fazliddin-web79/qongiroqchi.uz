@@ -22,6 +22,11 @@ const schema = z.object({
   defaultRetryCount: z.number().int().min(0).max(10).optional(),
   workingHours: workingHoursSchema.optional(),
   callSpeedLimit: z.number().int().min(1).max(10_000).optional(),
+  dailyCallLimit: z.number().int().min(1).max(1_000_000).optional(),
+  concurrentCallLimit: z.number().int().min(1).max(1_000).optional(),
+  retryFailed: z.boolean().optional(),
+  retryBusy: z.boolean().optional(),
+  retryUnanswered: z.boolean().optional(),
   defaultLanguage: z.enum(["uz", "en", "ru"]).optional(),
   timezone: z.string().trim().min(2).max(100).refine((value) => {
     try { new Intl.DateTimeFormat("en-US", { timeZone: value }).format(); return true; } catch { return false; }
@@ -47,6 +52,11 @@ export const PATCH = withApiHandler(async (request) => {
       defaultRetryCount: input.defaultRetryCount,
       workingHours: input.workingHours as Prisma.InputJsonValue | undefined,
       callSpeedLimit: input.callSpeedLimit,
+      dailyCallLimit: input.dailyCallLimit,
+      concurrentCallLimit: input.concurrentCallLimit,
+      retryFailed: input.retryFailed,
+      retryBusy: input.retryBusy,
+      retryUnanswered: input.retryUnanswered,
       defaultLanguage: input.defaultLanguage,
       timezone: input.timezone,
     },

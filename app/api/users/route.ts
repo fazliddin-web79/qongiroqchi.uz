@@ -8,9 +8,10 @@ import { requireAnyApiPermission, requireApiPermission } from "@/lib/auth/api";
 import { hashPassword } from "@/lib/auth/password";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
-import { isSuperAdmin } from "@/lib/permissions";
+import { isPlatformUser } from "@/lib/permissions";
 import { companyWhereForRequest } from "@/lib/modules/scope";
-import { PERMISSION } from "@/lib/permissions/constants";
+import { assertPermission } from "@/lib/permissions";
+import { PERMISSION, PLATFORM_ROLES } from "@/lib/permissions/constants";
 import { assertUserLimit } from "@/lib/billing/service";
 
 const createSchema = z.object({
@@ -35,11 +36,19 @@ export const GET = withApiHandler(async (request) => {
 export const POST = withApiHandler(async (request) => {
   const auth = await requireApiPermission(request, PERMISSION.USER_CREATE);
   const input = createSchema.parse(await request.json());
-  const companyId = isSuperAdmin(auth) ? input.companyId : auth.companyId ?? undefined;
-  if (!companyId) throw new ForbiddenError("A company is required for this user");
-  await assertUserLimit(companyId);
-  const role = await prisma.role.findFirst({ where: { id: input.roleId, deletedAt: null, companyId } });
-  if (!role || role.name === RoleName.SUPER_ADMIN) throw new NotFoundError("Company role");
+  const role = await prisma.role.findFirst({ where: { id: input.roleId, deletedAt: null } });
+  if (!role) throw new NotFoundError("Role");
+  const platformRole = PLATFORM_ROLES.includes(role.name as typeof PLATFORM_ROLES[number]);
+  let companyId: string | null = null;
+  if (platformRole) {
+    if (!isPlatformUser(auth)) throw new ForbiddenError("Only platform users can create platform users");
+    assertPermission(auth, PERMISSION.PLATFORM_USER_MANAGE);
+    if (role.name === RoleName.SUPER_ADMIN && !auth.roles.includes(RoleName.SUPER_ADMIN)) throw new ForbiddenError("Only SUPER_ADMIN can create another SUPER_ADMIN");
+  } else {
+    companyId = isPlatformUser(auth) ? input.companyId ?? role.companyId : auth.companyId ?? null;
+    if (!companyId || role.companyId !== companyId) throw new ForbiddenError("A matching company role is required");
+    await assertUserLimit(companyId);
+  }
   const user = await prisma.user.create({ data: { name: input.name, email: input.email, passwordHash: await hashPassword(input.password), companyId, roles: { create: { roleId: role.id } } }, select: { id: true, name: true, email: true, companyId: true, createdAt: true } });
   await recordAudit({ action: "USER_CREATE", entity: "User", entityId: user.id, user: auth, request });
   return apiSuccess(user, "User created", 201);

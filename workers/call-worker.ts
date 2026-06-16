@@ -1,11 +1,12 @@
 import { CallStatus, CampaignStatus } from "@prisma/client";
 import { DelayedError, Worker, type Job } from "bullmq";
-import { createLeadFromCall } from "@/lib/calls/pipeline";
+import { createLeadFromCall, launchCampaign } from "@/lib/calls/pipeline";
 import { prisma } from "@/lib/db/prisma";
 import { CALL_QUEUE_NAME, redisConnectionOptions } from "@/lib/queue/config";
 import type { CallJobData } from "@/lib/queue/call-queue";
 import { getTelephonyAdapter, type TelephonyCallResult, type TelephonyCallStatus } from "@/lib/telephony";
 import { getCompanySettings, parseWorkingHours } from "@/lib/settings/service";
+import { notifyCompany } from "@/lib/notifications/service";
 
 const worker = new Worker<CallJobData>(CALL_QUEUE_NAME, processCall, {
   connection: redisConnectionOptions(true),
@@ -22,15 +23,23 @@ worker.on("error", (error) => {
   console.error("Call worker error", error);
 });
 
+const scheduler = setInterval(() => void launchDueCampaigns(), 60_000);
+void launchDueCampaigns();
+
 async function processCall(job: Job<CallJobData>, token?: string) {
   const call = await prisma.call.findUnique({
     where: { id: job.data.callId },
-    include: { campaign: { select: { status: true, audioUrl: true } } },
+    include: { campaign: { select: { status: true, audioUrl: true, audioAsset: { select: { url: true } } } } },
   });
   if (!call) throw new Error(`Call ${job.data.callId} not found`);
   const settings = await getCompanySettings(call.companyId);
   if (!isWithinWorkingHours(settings.workingHours, settings.timezone)) {
     await job.moveToDelayed(Date.now() + 15 * 60_000, token);
+    throw new DelayedError();
+  }
+  const activeCalls = await prisma.call.count({ where: { companyId: call.companyId, status: CallStatus.CALLING } });
+  if (activeCalls >= settings.concurrentCallLimit) {
+    await job.moveToDelayed(Date.now() + 5_000, token);
     throw new DelayedError();
   }
   if (call.campaign.status === CampaignStatus.PAUSED) {
@@ -53,7 +62,7 @@ async function processCall(job: Job<CallJobData>, token?: string) {
   const telephony = getTelephonyAdapter();
   let result: TelephonyCallResult;
   try {
-    result = await telephony.call(call.phone, call.campaign.audioUrl);
+    result = await telephony.call(call.phone, call.campaign.audioAsset?.url ?? call.campaign.audioUrl);
   } catch (error) {
     const willRetry = hasAttemptsRemaining(job);
     await prisma.call.update({
@@ -69,7 +78,8 @@ async function processCall(job: Job<CallJobData>, token?: string) {
   }
   if (result.pressedKey) await telephony.handleIvrInput(result.callId, result.pressedKey);
   const status = mapStatus(result.status);
-  const willRetry = status !== CallStatus.ANSWERED && hasAttemptsRemaining(job);
+  const retryAllowed = status === CallStatus.BUSY ? settings.retryBusy : status === CallStatus.NOT_ANSWERED ? settings.retryUnanswered : settings.retryFailed;
+  const willRetry = status !== CallStatus.ANSWERED && retryAllowed && hasAttemptsRemaining(job);
 
   await prisma.call.update({
     where: { id: call.id },
@@ -116,11 +126,29 @@ function mapStatus(status: TelephonyCallStatus) {
 
 async function completeCampaignWhenFinished(campaignId: string) {
   const openCalls = await prisma.call.count({ where: { campaignId, status: { in: [CallStatus.PENDING, CallStatus.CALLING] } } });
-  if (!openCalls) await prisma.campaign.updateMany({ where: { id: campaignId, status: CampaignStatus.RUNNING }, data: { status: CampaignStatus.COMPLETED } });
+  if (!openCalls) {
+    const campaign = await prisma.campaign.findUnique({ where: { id: campaignId }, select: { companyId: true, name: true, status: true } });
+    if (campaign?.status === CampaignStatus.RUNNING) {
+      await prisma.campaign.update({ where: { id: campaignId }, data: { status: CampaignStatus.COMPLETED } });
+      await notifyCompany(campaign.companyId, { type: "CAMPAIGN_COMPLETED", title: "Campaign completed", message: campaign.name, metadata: { campaignId } });
+    }
+  }
+}
+
+async function launchDueCampaigns() {
+  const campaigns = await prisma.campaign.findMany({
+    where: { deletedAt: null, status: CampaignStatus.SCHEDULED, startTime: { lte: new Date() } },
+    select: { id: true },
+    take: 100,
+  });
+  for (const campaign of campaigns) {
+    await launchCampaign(campaign.id).catch((error) => console.error(`Scheduled campaign ${campaign.id} failed`, error));
+  }
 }
 
 async function shutdown(signal: string) {
   console.log(`Received ${signal}; closing call worker`);
+  clearInterval(scheduler);
   await worker.close();
   await prisma.$disconnect();
   process.exit(0);

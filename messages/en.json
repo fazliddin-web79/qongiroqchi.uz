@@ -25,7 +25,7 @@
     "register": { "title": "Create account", "description": "Start working with AutoCall CRM.", "submit": "Create account", "loginPrompt": "Already have an account?", "loginLink": "Sign in" },
     "forgotPassword": { "title": "Reset password", "description": "Enter your email to receive a reset link.", "submit": "Send reset link", "backLink": "Back to sign in" }
   },
-  "nav": { "dashboard": "Dashboard", "companies": "Companies", "users": "Users", "campaigns": "Campaigns", "contacts": "Contacts", "calls": "Calls", "leads": "Leads", "operator": "Operator panel", "queue": "Call queue", "errors": "Error logs", "auditLogs": "Audit logs", "settings": "Settings", "billing": "Billing" },
+  "nav": { "dashboard": "Dashboard", "companies": "Companies", "users": "Users", "campaigns": "Campaigns", "moderation": "Moderation", "contacts": "Contacts", "calls": "Calls", "leads": "Leads", "operator": "Operator panel", "queue": "Call queue", "errors": "Error logs", "auditLogs": "Audit logs", "settings": "Settings", "billing": "Billing" },
   "sidebar": { "helpTitle": "Need help?", "helpDescription": "Contact our support team." }, "topbar": { "search": "Search..." }, "profile": { "initials": "FS", "name": "Fazliddin S.", "profile": "Profile" }, "status": { "active": "Active", "pending": "Pending", "error": "Error" },
   "pages": {
     "dashboard": { "title": "Dashboard", "description": "Monitor key platform metrics." },
@@ -47,6 +47,8 @@
     "campaignStats": { "title": "Campaign statistics", "description": "Call and lead results by campaign." }, "operatorStats": { "title": "Operator statistics", "description": "Lead results by operator.", "operator": "Operator", "total": "Total", "interested": "Interested", "sold": "Sold" }, "noStats": "No statistics available yet.",
     "rows": { "summer": { "campaign": "Summer offer", "company": "Acme Group", "calls": "3,840" }, "welcome": { "campaign": "New customers", "company": "Nova Tech", "calls": "1,920" }, "payment": { "campaign": "Payment reminder", "company": "Atlas Market", "calls": "2,730" } }
   },
+  "platformDashboard": { "title": "Platform dashboard", "description": "Monitor companies, moderation, revenue, and system health.", "totalCompanies": "Total companies", "activeCompanies": "Active companies", "suspendedCompanies": "Suspended companies", "totalCampaigns": "Total campaigns", "runningCampaigns": "Running campaigns", "totalCalls": "Total calls", "totalLeads": "Total leads", "monthlyRevenue": "Monthly revenue", "activeSubscriptions": "Active subscriptions", "pendingApprovals": "Pending approvals", "systemErrors": "System errors", "queueStatus": "Queue status", "workers": "Workers", "pendingAudio": "Pending audio" },
+  "moderation": { "title": "Moderation", "description": "Review uploaded audio and campaign content before launch.", "audio": "Audio awaiting review", "campaigns": "Campaigns awaiting review", "company": "Company", "asset": "Audio asset", "campaign": "Campaign", "recipients": "Recipients", "reasonPrompt": "Enter a review reason" },
   "modules": {
     "common": { "loading": "Loading data...", "error": "The request could not be completed.", "retry": "Try again", "actions": "Actions", "edit": "Edit", "delete": "Delete", "previous": "Previous", "next": "Next", "cancel": "Cancel", "saving": "Saving...", "save": "Save" },
     "contacts": {
@@ -59,11 +61,11 @@
       "status": { "ACTIVE": "Active", "BLOCKED": "Blocked", "UNSUBSCRIBED": "Unsubscribed" }
     },
     "campaigns": {
-      "search": "Search campaigns by name...", "created": "Campaign created.", "updated": "Campaign updated.", "deleted": "Campaign deleted.", "start": "Start campaign", "started": "Jobs queued", "pause": "Pause campaign", "paused": "Campaign paused.", "resume": "Resume campaign", "resumed": "Campaign resumed.",
+      "search": "Search campaigns by name...", "created": "Campaign created.", "updated": "Campaign updated.", "deleted": "Campaign deleted.", "submit": "Submit for review", "submitted": "Campaign submitted for review.", "start": "Start campaign", "started": "Jobs queued", "pause": "Pause campaign", "paused": "Campaign paused.", "resume": "Resume campaign", "resumed": "Campaign resumed.",
       "deleteConfirm": "Are you sure you want to delete this campaign?", "createTitle": "Create campaign", "editTitle": "Edit campaign", "notScheduled": "Not scheduled",
-      "selectGroup": "Select a contact group", "chooseAudio": "Choose an audio file (MP3, WAV, OGG, M4A)",
+      "selectGroup": "Select a contact group", "chooseAudio": "Choose an audio file (MP3, WAV, M4A; max 10 MB)",
       "fields": { "name": "Name", "description": "Description", "group": "Contact group", "status": "Status", "startTime": "Start time", "createdBy": "Created by", "audio": "Audio file", "retryEnabled": "Enable retries", "retryCount": "Retry count", "ivrSettings": "IVR settings (JSON)" },
-      "status": { "DRAFT": "Draft", "SCHEDULED": "Scheduled", "RUNNING": "Running", "PAUSED": "Paused", "COMPLETED": "Completed", "FAILED": "Failed" }
+      "status": { "DRAFT": "Draft", "AUDIO_UPLOADED": "Audio uploaded", "PENDING_REVIEW": "Pending review", "APPROVED": "Approved", "REJECTED": "Rejected", "CHANGES_REQUESTED": "Changes requested", "SCHEDULED": "Scheduled", "RUNNING": "Running", "PAUSED": "Paused", "CANCELED": "Canceled", "COMPLETED": "Completed", "FAILED": "Failed" }
     },
     "calls": {
       "search": "Search by contact or phone...", "allCampaigns": "All campaigns", "updateTitle": "Update call result", "createLead": "Create a lead from this call", "leadCreated": "Lead created", "seconds": "seconds",
@@ -86,7 +88,7 @@
       "telegram": { "title": "Telegram notifications", "description": "Automatically notify the group when a new lead is created." },
       "working": { "title": "Working hours", "description": "The call worker only runs during the configured hours." },
       "calling": { "title": "Calling settings", "description": "Configure default retries, speed limit, and language." },
-      "fields": { "telegramBotToken": "Telegram bot token", "telegramChatId": "Telegram chat ID", "defaultRetryCount": "Default retry count", "workingEnabled": "Enable working hours restriction", "workingStart": "Start", "workingEnd": "End", "workingDays": "Weekdays (0-6)", "callSpeedLimit": "Calls per minute limit", "defaultLanguage": "Default language", "timezone": "Timezone" }
+      "fields": { "telegramBotToken": "Telegram bot token", "telegramChatId": "Telegram chat ID", "defaultRetryCount": "Default retry count", "workingEnabled": "Enable working hours restriction", "workingStart": "Start", "workingEnd": "End", "workingDays": "Weekdays (0-6)", "callSpeedLimit": "Calls per minute limit", "dailyCallLimit": "Daily call limit", "concurrentCallLimit": "Concurrent calls", "retryFailed": "Retry failed", "retryBusy": "Retry busy", "retryUnanswered": "Retry unanswered", "defaultLanguage": "Default language", "timezone": "Timezone" }
     },
     "billing": {
       "plans": "Plans", "subscriptions": "Subscriptions", "createPlan": "Create plan", "editPlan": "Edit plan", "assignPlan": "Assign plan", "planCreated": "Plan created.", "planUpdated": "Plan updated.", "assigned": "Plan assigned to company.", "deleteConfirm": "Are you sure you want to delete this plan?",

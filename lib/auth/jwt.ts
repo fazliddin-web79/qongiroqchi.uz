@@ -11,8 +11,8 @@ function getRefreshSecret() {
   return new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET ?? process.env.AUTH_SECRET ?? "development-refresh-secret-change-me");
 }
 
-export async function signAccessToken(userId: string) {
-  return new SignJWT({ type: "access" }).setProtectedHeader({ alg: "HS256" }).setSubject(userId).setIssuedAt().setExpirationTime(authConfig.accessTokenLifetime).sign(getAccessSecret());
+export async function signAccessToken(userId: string, impersonationId?: string) {
+  return new SignJWT({ type: "access", impersonationId }).setProtectedHeader({ alg: "HS256" }).setSubject(userId).setIssuedAt().setExpirationTime(authConfig.accessTokenLifetime).sign(getAccessSecret());
 }
 
 export async function signRefreshToken(userId: string, jti = randomUUID()) {
@@ -23,7 +23,7 @@ export async function signRefreshToken(userId: string, jti = randomUUID()) {
 export async function verifyAccessToken(token: string): Promise<AccessTokenPayload> {
   const { payload } = await jwtVerify(token, getAccessSecret());
   if (payload.type !== "access" || !payload.sub) throw new Error("Invalid access token");
-  return { sub: payload.sub, type: "access" };
+  return { sub: payload.sub, impersonationId: typeof payload.impersonationId === "string" ? payload.impersonationId : undefined, type: "access" };
 }
 
 export async function verifyRefreshToken(token: string): Promise<RefreshTokenPayload> {

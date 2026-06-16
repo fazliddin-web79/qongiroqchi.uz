@@ -47,7 +47,7 @@
     "forgotPassword": { "title": "Parolni tiklash", "description": "Tiklash havolasi uchun emailingizni kiriting.", "submit": "Tiklash havolasini yuborish", "backLink": "Kirish sahifasiga qaytish" }
   },
   "nav": {
-    "dashboard": "Dashboard", "companies": "Kompaniyalar", "users": "Foydalanuvchilar", "campaigns": "Kampaniyalar",
+    "dashboard": "Dashboard", "companies": "Kompaniyalar", "users": "Foydalanuvchilar", "campaigns": "Kampaniyalar", "moderation": "Moderatsiya",
     "contacts": "Kontaktlar", "calls": "Qo'ng'iroqlar", "leads": "Leadlar", "operator": "Operator paneli", "queue": "Qo'ng'iroq navbati", "errors": "Xatoliklar",
     "auditLogs": "Audit loglar", "settings": "Sozlamalar", "billing": "Billing"
   },
@@ -83,6 +83,8 @@
       "payment": { "campaign": "To'lov eslatmasi", "company": "Atlas Market", "calls": "2,730" }
     }
   },
+  "platformDashboard": { "title": "Platforma dashboardi", "description": "Kompaniyalar, moderatsiya, daromad va tizim holatini kuzating.", "totalCompanies": "Jami kompaniyalar", "activeCompanies": "Faol kompaniyalar", "suspendedCompanies": "To'xtatilgan kompaniyalar", "totalCampaigns": "Jami kampaniyalar", "runningCampaigns": "Ishlayotgan kampaniyalar", "totalCalls": "Jami qo'ng'iroqlar", "totalLeads": "Jami leadlar", "monthlyRevenue": "Oylik daromad", "activeSubscriptions": "Faol obunalar", "pendingApprovals": "Kutilayotgan tasdiqlar", "systemErrors": "Tizim xatolari", "queueStatus": "Queue holati", "workers": "Workerlar", "pendingAudio": "Kutilayotgan audio" },
+  "moderation": { "title": "Moderatsiya", "description": "Ishga tushirishdan oldin audio va kampaniya kontentini tekshiring.", "audio": "Tekshiruvdagi audiolar", "campaigns": "Tekshiruvdagi kampaniyalar", "company": "Kompaniya", "asset": "Audio fayl", "campaign": "Kampaniya", "recipients": "Qabul qiluvchilar", "reasonPrompt": "Tekshiruv sababini kiriting" },
   "modules": {
     "common": {
       "loading": "Ma'lumotlar yuklanmoqda...", "error": "So'rovni bajarib bo'lmadi.", "retry": "Qayta urinish", "actions": "Amallar",
@@ -98,11 +100,11 @@
       "status": { "ACTIVE": "Faol", "BLOCKED": "Bloklangan", "UNSUBSCRIBED": "Obunadan chiqqan" }
     },
     "campaigns": {
-      "search": "Kampaniya nomi bo'yicha qidirish...", "created": "Kampaniya yaratildi.", "updated": "Kampaniya yangilandi.", "deleted": "Kampaniya o'chirildi.", "start": "Kampaniyani boshlash", "started": "Navbatga qo'shilgan joblar", "pause": "Kampaniyani pauza qilish", "paused": "Kampaniya pauza qilindi.", "resume": "Kampaniyani davom ettirish", "resumed": "Kampaniya davom ettirildi.",
+      "search": "Kampaniya nomi bo'yicha qidirish...", "created": "Kampaniya yaratildi.", "updated": "Kampaniya yangilandi.", "deleted": "Kampaniya o'chirildi.", "submit": "Tekshiruvga yuborish", "submitted": "Kampaniya moderatsiyaga yuborildi.", "start": "Kampaniyani boshlash", "started": "Navbatga qo'shilgan joblar", "pause": "Kampaniyani pauza qilish", "paused": "Kampaniya pauza qilindi.", "resume": "Kampaniyani davom ettirish", "resumed": "Kampaniya davom ettirildi.",
       "deleteConfirm": "Kampaniyani o'chirishni tasdiqlaysizmi?", "createTitle": "Kampaniya yaratish", "editTitle": "Kampaniyani tahrirlash", "notScheduled": "Rejalashtirilmagan",
-      "selectGroup": "Kontakt guruhini tanlang", "chooseAudio": "Audio fayl tanlang (MP3, WAV, OGG, M4A)",
+      "selectGroup": "Kontakt guruhini tanlang", "chooseAudio": "Audio fayl tanlang (MP3, WAV, M4A; maksimum 10 MB)",
       "fields": { "name": "Nomi", "description": "Tavsif", "group": "Kontakt guruhi", "status": "Status", "startTime": "Boshlanish vaqti", "createdBy": "Yaratuvchi", "audio": "Audio fayl", "retryEnabled": "Qayta urinish yoqilsin", "retryCount": "Qayta urinishlar soni", "ivrSettings": "IVR sozlamalari (JSON)" },
-      "status": { "DRAFT": "Qoralama", "SCHEDULED": "Rejalashtirilgan", "RUNNING": "Ishlamoqda", "PAUSED": "To'xtatilgan", "COMPLETED": "Yakunlangan", "FAILED": "Xatolik" }
+      "status": { "DRAFT": "Qoralama", "AUDIO_UPLOADED": "Audio yuklangan", "PENDING_REVIEW": "Tekshiruv kutilmoqda", "APPROVED": "Tasdiqlangan", "REJECTED": "Rad etilgan", "CHANGES_REQUESTED": "O'zgartirish so'ralgan", "SCHEDULED": "Rejalashtirilgan", "RUNNING": "Ishlamoqda", "PAUSED": "To'xtatilgan", "CANCELED": "Bekor qilingan", "COMPLETED": "Yakunlangan", "FAILED": "Xatolik" }
     },
     "calls": {
       "search": "Kontakt yoki telefon bo'yicha qidirish...", "allCampaigns": "Barcha kampaniyalar", "updateTitle": "Qo'ng'iroq natijasini yangilash", "createLead": "Bu qo'ng'iroqdan lead yaratish", "leadCreated": "Lead yaratildi", "seconds": "soniya",
@@ -125,7 +127,7 @@
       "telegram": { "title": "Telegram bildirishnomalari", "description": "Yangi lead yaratilganda guruhga avtomatik xabar yuboriladi." },
       "working": { "title": "Ish vaqti", "description": "Qo'ng'iroq worker faqat belgilangan vaqt oralig'ida ishlaydi." },
       "calling": { "title": "Qo'ng'iroq sozlamalari", "description": "Default retry, tezlik limiti va tilni sozlang." },
-      "fields": { "telegramBotToken": "Telegram bot token", "telegramChatId": "Telegram chat ID", "defaultRetryCount": "Default qayta urinishlar", "workingEnabled": "Ish vaqti cheklovini yoqish", "workingStart": "Boshlanish", "workingEnd": "Tugash", "workingDays": "Hafta kunlari (0-6)", "callSpeedLimit": "Daqiqadagi qo'ng'iroqlar limiti", "defaultLanguage": "Default til", "timezone": "Vaqt zonasi" }
+      "fields": { "telegramBotToken": "Telegram bot token", "telegramChatId": "Telegram chat ID", "defaultRetryCount": "Default qayta urinishlar", "workingEnabled": "Ish vaqti cheklovini yoqish", "workingStart": "Boshlanish", "workingEnd": "Tugash", "workingDays": "Hafta kunlari (0-6)", "callSpeedLimit": "Daqiqadagi qo'ng'iroqlar limiti", "dailyCallLimit": "Kunlik qo'ng'iroq limiti", "concurrentCallLimit": "Parallel qo'ng'iroqlar", "retryFailed": "Xatoni qayta urinish", "retryBusy": "Band raqamni qayta urinish", "retryUnanswered": "Javobsiz raqamni qayta urinish", "defaultLanguage": "Default til", "timezone": "Vaqt zonasi" }
     },
     "billing": {
       "plans": "Tariflar", "subscriptions": "Obunalar", "createPlan": "Tarif yaratish", "editPlan": "Tarifni tahrirlash", "assignPlan": "Tarif biriktirish", "planCreated": "Tarif yaratildi.", "planUpdated": "Tarif yangilandi.", "assigned": "Tarif kompaniyaga biriktirildi.", "deleteConfirm": "Tarifni o'chirishni tasdiqlaysizmi?",

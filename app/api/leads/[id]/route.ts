@@ -27,7 +27,7 @@ export const GET = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const PATCH = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN, ROLES.OPERATOR]);
+  const auth = await requireApiAuth(request);
   const { id } = await params;
   const input = schema.parse(await request.json());
   const changes = Object.keys(input);
@@ -53,7 +53,7 @@ export const PATCH = withApiHandler<Context>(async (request, { params }) => {
 });
 
 export const DELETE = withApiHandler<Context>(async (request, { params }) => {
-  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.ADMIN]);
+  const auth = await requireApiAuth(request, [ROLES.SUPER_ADMIN, ROLES.COMPANY_OWNER, ROLES.COMPANY_ADMIN]);
   const { id } = await params;
   const existing = await prisma.lead.findFirst({ where: { id, deletedAt: null, ...leadWhere(auth) } });
   if (!existing) throw new NotFoundError("Lead");

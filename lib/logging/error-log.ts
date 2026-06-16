@@ -14,7 +14,7 @@ export async function recordError(error: unknown, request: NextRequest, statusCo
         method: request.method,
         statusCode,
         userId: user?.id,
-        companyId: user?.companyId ?? undefined,
+        companyId: user?.impersonatedCompanyId ?? user?.companyId ?? undefined,
         context: { query: Object.fromEntries(request.nextUrl.searchParams.entries()) },
       },
     });

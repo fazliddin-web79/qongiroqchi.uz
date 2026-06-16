@@ -1,6 +1,6 @@
 import type { AuthUser } from "@/types/auth";
 import { ForbiddenError } from "@/lib/api/errors";
-import { ROLES } from "./constants";
+import { PLATFORM_ROLES, ROLES } from "./constants";
 
 export function hasPermission(user: AuthUser, permission: string) {
   return user.permissions.includes("*") || user.permissions.includes(permission);
@@ -22,8 +22,12 @@ export function isSuperAdmin(user: AuthUser) {
   return hasRole(user, ROLES.SUPER_ADMIN);
 }
 
-export function isAdmin(user: AuthUser) {
-  return hasRole(user, ROLES.ADMIN);
+export function isPlatformUser(user: AuthUser) {
+  return PLATFORM_ROLES.some((role) => hasRole(user, role));
+}
+
+export function isCompanyAdmin(user: AuthUser) {
+  return hasRole(user, ROLES.COMPANY_OWNER) || hasRole(user, ROLES.COMPANY_ADMIN);
 }
 
 export function isOperator(user: AuthUser) {
@@ -43,7 +47,8 @@ export function assertAnyPermission(user: AuthUser, permissions: string[]) {
 }
 
 export function companyWhere(user: AuthUser) {
-  if (isSuperAdmin(user)) return {};
+  if (user.impersonatedCompanyId) return { companyId: user.impersonatedCompanyId };
+  if (isPlatformUser(user)) return {};
   if (!user.companyId) throw new ForbiddenError("User is not assigned to a company");
   return { companyId: user.companyId };
 }

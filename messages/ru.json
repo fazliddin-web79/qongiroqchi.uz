@@ -25,7 +25,7 @@
     "register": { "title": "Создать аккаунт", "description": "Начните работу с AutoCall CRM.", "submit": "Создать аккаунт", "loginPrompt": "Уже есть аккаунт?", "loginLink": "Войти" },
     "forgotPassword": { "title": "Восстановить пароль", "description": "Введите email для получения ссылки.", "submit": "Отправить ссылку", "backLink": "Вернуться ко входу" }
   },
-  "nav": { "dashboard": "Панель", "companies": "Компании", "users": "Пользователи", "campaigns": "Кампании", "contacts": "Контакты", "calls": "Звонки", "leads": "Лиды", "operator": "Панель оператора", "queue": "Очередь звонков", "errors": "Ошибки", "auditLogs": "Аудит", "settings": "Настройки", "billing": "Биллинг" },
+  "nav": { "dashboard": "Панель", "companies": "Компании", "users": "Пользователи", "campaigns": "Кампании", "moderation": "Модерация", "contacts": "Контакты", "calls": "Звонки", "leads": "Лиды", "operator": "Панель оператора", "queue": "Очередь звонков", "errors": "Ошибки", "auditLogs": "Аудит", "settings": "Настройки", "billing": "Биллинг" },
   "sidebar": { "helpTitle": "Нужна помощь?", "helpDescription": "Свяжитесь с командой поддержки." }, "topbar": { "search": "Поиск..." }, "profile": { "initials": "FS", "name": "Fazliddin S.", "profile": "Профиль" }, "status": { "active": "Активно", "pending": "Ожидает", "error": "Ошибка" },
   "pages": {
     "dashboard": { "title": "Панель", "description": "Следите за ключевыми показателями платформы." },
@@ -47,6 +47,8 @@
     "campaignStats": { "title": "Статистика кампаний", "description": "Результаты звонков и лидов по кампаниям." }, "operatorStats": { "title": "Статистика операторов", "description": "Результаты лидов по операторам.", "operator": "Оператор", "total": "Всего", "interested": "Заинтересован", "sold": "Продано" }, "noStats": "Статистика пока недоступна.",
     "rows": { "summer": { "campaign": "Летнее предложение", "company": "Acme Group", "calls": "3,840" }, "welcome": { "campaign": "Новые клиенты", "company": "Nova Tech", "calls": "1,920" }, "payment": { "campaign": "Напоминание об оплате", "company": "Atlas Market", "calls": "2,730" } }
   },
+  "platformDashboard": { "title": "Панель платформы", "description": "Контроль компаний, модерации, дохода и состояния системы.", "totalCompanies": "Всего компаний", "activeCompanies": "Активные компании", "suspendedCompanies": "Приостановленные компании", "totalCampaigns": "Всего кампаний", "runningCampaigns": "Запущенные кампании", "totalCalls": "Всего звонков", "totalLeads": "Всего лидов", "monthlyRevenue": "Месячный доход", "activeSubscriptions": "Активные подписки", "pendingApprovals": "Ожидают проверки", "systemErrors": "Системные ошибки", "queueStatus": "Статус очереди", "workers": "Воркеры", "pendingAudio": "Аудио на проверке" },
+  "moderation": { "title": "Модерация", "description": "Проверяйте аудио и содержание кампаний перед запуском.", "audio": "Аудио на проверке", "campaigns": "Кампании на проверке", "company": "Компания", "asset": "Аудиофайл", "campaign": "Кампания", "recipients": "Получатели", "reasonPrompt": "Укажите причину решения" },
   "modules": {
     "common": { "loading": "Загрузка данных...", "error": "Не удалось выполнить запрос.", "retry": "Повторить", "actions": "Действия", "edit": "Изменить", "delete": "Удалить", "previous": "Назад", "next": "Далее", "cancel": "Отмена", "saving": "Сохранение...", "save": "Сохранить" },
     "contacts": {
@@ -59,11 +61,11 @@
       "status": { "ACTIVE": "Активен", "BLOCKED": "Заблокирован", "UNSUBSCRIBED": "Отписан" }
     },
     "campaigns": {
-      "search": "Поиск кампаний по названию...", "created": "Кампания создана.", "updated": "Кампания обновлена.", "deleted": "Кампания удалена.", "start": "Запустить кампанию", "started": "Заданий в очереди", "pause": "Приостановить кампанию", "paused": "Кампания приостановлена.", "resume": "Продолжить кампанию", "resumed": "Кампания продолжена.",
+      "search": "Поиск кампаний по названию...", "created": "Кампания создана.", "updated": "Кампания обновлена.", "deleted": "Кампания удалена.", "submit": "Отправить на проверку", "submitted": "Кампания отправлена на модерацию.", "start": "Запустить кампанию", "started": "Заданий в очереди", "pause": "Приостановить кампанию", "paused": "Кампания приостановлена.", "resume": "Продолжить кампанию", "resumed": "Кампания продолжена.",
       "deleteConfirm": "Удалить эту кампанию?", "createTitle": "Создать кампанию", "editTitle": "Изменить кампанию", "notScheduled": "Не запланировано",
-      "selectGroup": "Выберите группу контактов", "chooseAudio": "Выберите аудиофайл (MP3, WAV, OGG, M4A)",
+      "selectGroup": "Выберите группу контактов", "chooseAudio": "Выберите аудиофайл (MP3, WAV, M4A; максимум 10 МБ)",
       "fields": { "name": "Название", "description": "Описание", "group": "Группа контактов", "status": "Статус", "startTime": "Время запуска", "createdBy": "Автор", "audio": "Аудиофайл", "retryEnabled": "Включить повторы", "retryCount": "Количество повторов", "ivrSettings": "Настройки IVR (JSON)" },
-      "status": { "DRAFT": "Черновик", "SCHEDULED": "Запланирована", "RUNNING": "Запущена", "PAUSED": "Приостановлена", "COMPLETED": "Завершена", "FAILED": "Ошибка" }
+      "status": { "DRAFT": "Черновик", "AUDIO_UPLOADED": "Аудио загружено", "PENDING_REVIEW": "Ожидает проверки", "APPROVED": "Одобрена", "REJECTED": "Отклонена", "CHANGES_REQUESTED": "Запрошены изменения", "SCHEDULED": "Запланирована", "RUNNING": "Запущена", "PAUSED": "Приостановлена", "CANCELED": "Отменена", "COMPLETED": "Завершена", "FAILED": "Ошибка" }
     },
     "calls": {
       "search": "Поиск по контакту или телефону...", "allCampaigns": "Все кампании", "updateTitle": "Обновить результат звонка", "createLead": "Создать лид из звонка", "leadCreated": "Лид создан", "seconds": "сек.",
@@ -86,7 +88,7 @@
       "telegram": { "title": "Уведомления Telegram", "description": "Автоматически отправлять сообщение в группу при создании нового лида." },
       "working": { "title": "Рабочее время", "description": "Воркер звонков работает только в указанное время." },
       "calling": { "title": "Настройки звонков", "description": "Настройте повторы, ограничение скорости и язык." },
-      "fields": { "telegramBotToken": "Токен Telegram-бота", "telegramChatId": "Telegram chat ID", "defaultRetryCount": "Повторы по умолчанию", "workingEnabled": "Включить ограничение рабочего времени", "workingStart": "Начало", "workingEnd": "Конец", "workingDays": "Дни недели (0-6)", "callSpeedLimit": "Лимит звонков в минуту", "defaultLanguage": "Язык по умолчанию", "timezone": "Часовой пояс" }
+      "fields": { "telegramBotToken": "Токен Telegram-бота", "telegramChatId": "Telegram chat ID", "defaultRetryCount": "Повторы по умолчанию", "workingEnabled": "Включить ограничение рабочего времени", "workingStart": "Начало", "workingEnd": "Конец", "workingDays": "Дни недели (0-6)", "callSpeedLimit": "Лимит звонков в минуту", "dailyCallLimit": "Дневной лимит звонков", "concurrentCallLimit": "Одновременные звонки", "retryFailed": "Повторять ошибки", "retryBusy": "Повторять занятые", "retryUnanswered": "Повторять без ответа", "defaultLanguage": "Язык по умолчанию", "timezone": "Часовой пояс" }
     },
     "billing": {
       "plans": "Тарифы", "subscriptions": "Подписки", "createPlan": "Создать тариф", "editPlan": "Изменить тариф", "assignPlan": "Назначить тариф", "planCreated": "Тариф создан.", "planUpdated": "Тариф обновлён.", "assigned": "Тариф назначен компании.", "deleteConfirm": "Удалить этот тариф?",

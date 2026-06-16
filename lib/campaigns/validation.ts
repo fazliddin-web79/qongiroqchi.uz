@@ -5,9 +5,8 @@ import { AppError } from "@/lib/api/errors";
 const baseSchema = z.object({
   name: z.string().trim().min(2).max(160),
   description: z.string().trim().max(1000).nullable().optional(),
-  audioUrl: z.string().trim().max(500).nullable().optional(),
+  audioAssetId: z.uuid().nullable().optional(),
   contactGroupId: z.uuid(),
-  status: z.nativeEnum(CampaignStatus).default(CampaignStatus.DRAFT),
   startTime: z.string().trim().nullable().optional(),
   retryEnabled: z.boolean().default(false),
   retryCount: z.number().int().min(0).max(10).default(0),

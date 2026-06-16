@@ -18,10 +18,15 @@ type Settings = {
   defaultRetryCount: number;
   workingHours: { enabled?: boolean; start?: string; end?: string; days?: number[] };
   callSpeedLimit: number;
+  dailyCallLimit: number;
+  concurrentCallLimit: number;
+  retryFailed: boolean;
+  retryBusy: boolean;
+  retryUnanswered: boolean;
   defaultLanguage: string;
   timezone: string;
 };
-type Form = { telegramBotToken: string; telegramChatId: string; defaultRetryCount: string; workingEnabled: boolean; workingStart: string; workingEnd: string; workingDays: string; callSpeedLimit: string; defaultLanguage: string; timezone: string };
+type Form = { telegramBotToken: string; telegramChatId: string; defaultRetryCount: string; workingEnabled: boolean; workingStart: string; workingEnd: string; workingDays: string; callSpeedLimit: string; dailyCallLimit: string; concurrentCallLimit: string; retryFailed: boolean; retryBusy: boolean; retryUnanswered: boolean; defaultLanguage: string; timezone: string };
 
 export function SettingsPage() {
   const { t } = useTranslations();
@@ -41,7 +46,8 @@ export function SettingsPage() {
       setForm({
         telegramBotToken: value.telegramBotToken ?? "", telegramChatId: value.telegramChatId ?? "", defaultRetryCount: String(value.defaultRetryCount),
         workingEnabled: value.workingHours?.enabled === true, workingStart: value.workingHours?.start ?? "09:00", workingEnd: value.workingHours?.end ?? "18:00", workingDays: (value.workingHours?.days ?? [1, 2, 3, 4, 5]).join(","),
-        callSpeedLimit: String(value.callSpeedLimit), defaultLanguage: value.defaultLanguage, timezone: value.timezone,
+        callSpeedLimit: String(value.callSpeedLimit), dailyCallLimit: String(value.dailyCallLimit), concurrentCallLimit: String(value.concurrentCallLimit),
+        retryFailed: value.retryFailed, retryBusy: value.retryBusy, retryUnanswered: value.retryUnanswered, defaultLanguage: value.defaultLanguage, timezone: value.timezone,
       });
     } catch (value) { setError(value instanceof Error ? value.message : t("modules.common.error")); } finally { setLoading(false); }
   }, [companiesLoading, companyId, t]);
@@ -53,7 +59,8 @@ export function SettingsPage() {
     try {
       await apiRequest("/api/settings", jsonRequest("PATCH", {
         companyId: companyId || undefined, telegramBotToken: form.telegramBotToken || null, telegramChatId: form.telegramChatId || null,
-        defaultRetryCount: Number(form.defaultRetryCount), callSpeedLimit: Number(form.callSpeedLimit), defaultLanguage: form.defaultLanguage, timezone: form.timezone,
+        defaultRetryCount: Number(form.defaultRetryCount), callSpeedLimit: Number(form.callSpeedLimit), dailyCallLimit: Number(form.dailyCallLimit), concurrentCallLimit: Number(form.concurrentCallLimit),
+        retryFailed: form.retryFailed, retryBusy: form.retryBusy, retryUnanswered: form.retryUnanswered, defaultLanguage: form.defaultLanguage, timezone: form.timezone,
         workingHours: { enabled: form.workingEnabled, start: form.workingStart, end: form.workingEnd, days: form.workingDays.split(",").map(Number).filter((day) => Number.isInteger(day) && day >= 0 && day <= 6) },
       }));
       setNotice(t("modules.settings.saved"));
@@ -76,7 +83,7 @@ export function SettingsPage() {
       {error && <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">{error}</div>}
       <Card><CardHeader><CardTitle className="flex items-center gap-2"><Bell className="size-5 text-primary" />{t("modules.settings.telegram.title")}</CardTitle><CardDescription>{t("modules.settings.telegram.description")}</CardDescription></CardHeader><CardContent className="grid gap-4 md:grid-cols-2"><Field label={t("modules.settings.fields.telegramBotToken")}><Input type="password" value={form.telegramBotToken} onChange={(event) => setForm({ ...form, telegramBotToken: event.target.value })} /></Field><Field label={t("modules.settings.fields.telegramChatId")}><Input value={form.telegramChatId} onChange={(event) => setForm({ ...form, telegramChatId: event.target.value })} /></Field><div className="md:col-span-2"><Button type="button" variant="outline" disabled={testing} onClick={() => void testTelegram()}><Send className="size-4" />{testing ? t("modules.settings.testing") : t("modules.settings.test")}</Button></div></CardContent></Card>
       <div className="grid gap-5 xl:grid-cols-2"><Card><CardHeader><CardTitle className="flex items-center gap-2"><Clock3 className="size-5 text-primary" />{t("modules.settings.working.title")}</CardTitle><CardDescription>{t("modules.settings.working.description")}</CardDescription></CardHeader><CardContent className="space-y-4"><label className="flex items-center gap-3 rounded-lg border p-3 text-sm font-medium"><input type="checkbox" checked={form.workingEnabled} onChange={(event) => setForm({ ...form, workingEnabled: event.target.checked })} />{t("modules.settings.fields.workingEnabled")}</label><div className="grid gap-4 sm:grid-cols-2"><Field label={t("modules.settings.fields.workingStart")}><Input type="time" value={form.workingStart} onChange={(event) => setForm({ ...form, workingStart: event.target.value })} /></Field><Field label={t("modules.settings.fields.workingEnd")}><Input type="time" value={form.workingEnd} onChange={(event) => setForm({ ...form, workingEnd: event.target.value })} /></Field></div><Field label={t("modules.settings.fields.workingDays")}><Input value={form.workingDays} onChange={(event) => setForm({ ...form, workingDays: event.target.value })} placeholder="1,2,3,4,5" /></Field><Field label={t("modules.settings.fields.timezone")}><Input value={form.timezone} onChange={(event) => setForm({ ...form, timezone: event.target.value })} placeholder="Asia/Tashkent" /></Field></CardContent></Card>
-      <Card><CardHeader><CardTitle className="flex items-center gap-2"><Gauge className="size-5 text-primary" />{t("modules.settings.calling.title")}</CardTitle><CardDescription>{t("modules.settings.calling.description")}</CardDescription></CardHeader><CardContent className="space-y-4"><Field label={t("modules.settings.fields.defaultRetryCount")}><Input type="number" min="0" max="10" value={form.defaultRetryCount} onChange={(event) => setForm({ ...form, defaultRetryCount: event.target.value })} /></Field><Field label={t("modules.settings.fields.callSpeedLimit")}><Input type="number" min="1" value={form.callSpeedLimit} onChange={(event) => setForm({ ...form, callSpeedLimit: event.target.value })} /></Field><Field label={t("modules.settings.fields.defaultLanguage")}><Select className="w-full" value={form.defaultLanguage} onChange={(event) => setForm({ ...form, defaultLanguage: event.target.value })}><option value="uz">{t("languages.uz")}</option><option value="en">{t("languages.en")}</option><option value="ru">{t("languages.ru")}</option></Select></Field></CardContent></Card></div>
+      <Card><CardHeader><CardTitle className="flex items-center gap-2"><Gauge className="size-5 text-primary" />{t("modules.settings.calling.title")}</CardTitle><CardDescription>{t("modules.settings.calling.description")}</CardDescription></CardHeader><CardContent className="space-y-4"><Field label={t("modules.settings.fields.defaultRetryCount")}><Input type="number" min="0" max="10" value={form.defaultRetryCount} onChange={(event) => setForm({ ...form, defaultRetryCount: event.target.value })} /></Field><Field label={t("modules.settings.fields.callSpeedLimit")}><Input type="number" min="1" value={form.callSpeedLimit} onChange={(event) => setForm({ ...form, callSpeedLimit: event.target.value })} /></Field><Field label={t("modules.settings.fields.dailyCallLimit")}><Input type="number" min="1" value={form.dailyCallLimit} onChange={(event) => setForm({ ...form, dailyCallLimit: event.target.value })} /></Field><Field label={t("modules.settings.fields.concurrentCallLimit")}><Input type="number" min="1" value={form.concurrentCallLimit} onChange={(event) => setForm({ ...form, concurrentCallLimit: event.target.value })} /></Field><div className="grid gap-2 sm:grid-cols-3">{(["retryFailed", "retryBusy", "retryUnanswered"] as const).map((key) => <label key={key} className="flex items-center gap-2 rounded-lg border p-3 text-sm"><input type="checkbox" checked={form[key]} onChange={(event) => setForm({ ...form, [key]: event.target.checked })} />{t(`modules.settings.fields.${key}`)}</label>)}</div><Field label={t("modules.settings.fields.defaultLanguage")}><Select className="w-full" value={form.defaultLanguage} onChange={(event) => setForm({ ...form, defaultLanguage: event.target.value })}><option value="uz">{t("languages.uz")}</option><option value="en">{t("languages.en")}</option><option value="ru">{t("languages.ru")}</option></Select></Field></CardContent></Card></div>
       <div className="flex justify-end"><Button disabled={saving}><Save className="size-4" />{saving ? t("modules.common.saving") : t("modules.common.save")}</Button></div>
     </form>}
   </>;

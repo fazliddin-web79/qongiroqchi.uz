@@ -4,7 +4,7 @@ import { withApiHandler } from "@/lib/api/handler";
 import { paginationFrom, paginationMeta } from "@/lib/api/query";
 import { apiSuccess } from "@/lib/api/response";
 import { requireApiPermission } from "@/lib/auth/api";
-import { assertCampaignSchedule, createCampaignSchema, parseStartTime } from "@/lib/campaigns/validation";
+import { createCampaignSchema, parseStartTime } from "@/lib/campaigns/validation";
 import { prisma } from "@/lib/db/prisma";
 import { recordAudit } from "@/lib/logging/audit-log";
 import { companyIdForWrite, companyWhereForRequest } from "@/lib/modules/scope";
@@ -28,7 +28,7 @@ export const GET = withApiHandler(async (request) => {
     ...(search ? { name: { contains: search, mode: "insensitive" } } : {}),
   };
   const [items, total] = await prisma.$transaction([
-    prisma.campaign.findMany({ where, skip, take: limit, orderBy: { createdAt: "desc" }, include: { contactGroup: { select: { id: true, name: true, _count: { select: { contacts: { where: { deletedAt: null } } } } } }, createdBy: { select: { id: true, name: true } }, company: { select: { id: true, name: true } } } }),
+    prisma.campaign.findMany({ where, skip, take: limit, orderBy: { createdAt: "desc" }, include: { audioAsset: true, contactGroup: { select: { id: true, name: true, _count: { select: { contacts: { where: { deletedAt: null } } } } } }, createdBy: { select: { id: true, name: true } }, company: { select: { id: true, name: true, status: true } } } }),
     prisma.campaign.count({ where }),
   ]);
   return apiSuccess({ items, pagination: paginationMeta(total, page, limit) });
@@ -40,24 +40,28 @@ export const POST = withApiHandler(async (request) => {
   const companyId = companyIdForWrite(auth, input.companyId);
   await assertCampaignLimit(companyId);
   if (!(await prisma.contactGroup.findFirst({ where: { id: input.contactGroupId, companyId, deletedAt: null } }))) throw new NotFoundError("Contact group");
+  const audioAsset = input.audioAssetId
+    ? await prisma.audioAsset.findFirst({ where: { id: input.audioAssetId, companyId, deletedAt: null } })
+    : null;
+  if (input.audioAssetId && !audioAsset) throw new NotFoundError("Audio asset");
   const settings = await getCompanySettings(companyId);
   const startTime = parseStartTime(input.startTime);
-  assertCampaignSchedule(input.status, startTime);
   const campaign = await prisma.campaign.create({
     data: {
       companyId,
       name: input.name,
       description: input.description,
-      audioUrl: input.audioUrl,
+      audioUrl: audioAsset?.url,
+      audioAssetId: audioAsset?.id,
       contactGroupId: input.contactGroupId,
-      status: input.status,
+      status: audioAsset ? CampaignStatus.AUDIO_UPLOADED : CampaignStatus.DRAFT,
       startTime,
       retryEnabled: input.retryEnabled,
       retryCount: input.retryEnabled ? input.retryCount || settings.defaultRetryCount : 0,
       ivrSettings: input.ivrSettings as Prisma.InputJsonValue,
       createdById: auth.id,
     },
-    include: { contactGroup: { select: { id: true, name: true } }, createdBy: { select: { id: true, name: true } } },
+    include: { audioAsset: true, contactGroup: { select: { id: true, name: true } }, createdBy: { select: { id: true, name: true } } },
   });
   await recordAudit({ action: "CAMPAIGN_CREATE", entity: "Campaign", entityId: campaign.id, user: auth, request });
   return apiSuccess(campaign, "Campaign created", 201);

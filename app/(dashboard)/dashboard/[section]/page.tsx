@@ -6,6 +6,7 @@ import { LeadsPage } from "@/components/pages/leads-page";
 import { QueuePage } from "@/components/pages/queue-page";
 import { SettingsPage } from "@/components/pages/settings-page";
 import { BillingPage } from "@/components/pages/billing-page";
+import { ModerationPage } from "@/components/pages/moderation-page";
 import { DashboardPlaceholder, type DashboardPageKey } from "@/components/pages/dashboard-placeholder";
 
 const pageMap: Record<string, DashboardPageKey> = {
@@ -23,6 +24,7 @@ export default async function Page({ params }: { params: Promise<{ section: stri
   if (section === "queue") return <QueuePage />;
   if (section === "settings") return <SettingsPage />;
   if (section === "billing") return <BillingPage />;
+  if (section === "moderation") return <ModerationPage />;
   const page = pageMap[section];
   if (!page) notFound();
   return <DashboardPlaceholder page={page} />;
